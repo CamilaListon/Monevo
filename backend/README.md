@@ -41,6 +41,12 @@ node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"
 
 Use o valor gerado em `JWT_SECRET`. Não compartilhe nem versione `backend/.env`. Se a senha do banco tiver caracteres especiais, codifique-os para URL na variável `DATABASE_URL`.
 
+### Usar o PostgreSQL do Supabase
+
+No painel do projeto Supabase, abra **Connect** e copie a URI de conexão PostgreSQL. Prefira a conexão direta quando sua rede aceitar IPv6; caso contrário, use o **Session pooler**. Substitua somente o valor de `DATABASE_URL` em `backend/.env` pela URI fornecida, mantendo os parâmetros que o Supabase incluir. Não substitua o restante do arquivo: o backend também exige `JWT_SECRET` e `FRONTEND_URL`. Use a senha do banco de dados do Supabase — ela é diferente da `SUPABASE_SECRET_KEY`.
+
+Para esta configuração, o Monevo continua usando o login e a API atuais; não precisa configurar `SUPABASE_URL`, as chaves de API ou `@supabase/server`. Não envie credenciais pelo chat nem versione o arquivo `.env`.
+
 ## Banco de dados e execução
 
 Na raiz do projeto:
