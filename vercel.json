@@ -4,11 +4,13 @@
     "backend": {
       "root": "backend",
       "framework": "express",
+      "installCommand": "npm install",
       "buildCommand": "npm run db:generate && npm run build"
     },
     "frontend": {
       "root": "frontend",
-      "framework": "vite"
+      "framework": "vite",
+      "installCommand": "npm install"
     }
   },
   "rewrites": [
