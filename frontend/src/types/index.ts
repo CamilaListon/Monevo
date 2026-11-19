@@ -1,5 +1,6 @@
 export type BillStatus = "paid" | "pending" | "overdue";
 export type StatusFilter = BillStatus | "all";
+export type ThemeMode = "light" | "dark";
 
 export interface User {
   id: string;

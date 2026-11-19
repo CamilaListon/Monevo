@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { config } from "./config.js";
+import { config } from "../config/config.js";
 
 export const COOKIE_NAME = "monevo_session";
 const tokenLifetimeSeconds = 60 * 60 * 24 * 7;
@@ -23,15 +23,7 @@ export function clearSessionCookie(res: Response): void {
   res.clearCookie(COOKIE_NAME, { httpOnly: true, sameSite: "lax", path: "/" });
 }
 
-export interface AuthenticatedRequest extends Request {
-  userId?: string;
-}
-
-export function requireAuth(
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction,
-): void {
+export function requireAuth(req: Request, res: Response, next: NextFunction): void {
   const token = req.cookies?.[COOKIE_NAME] as string | undefined;
   if (!token) {
     res.status(401).json({ error: "Autenticação necessária." });
@@ -39,9 +31,7 @@ export function requireAuth(
   }
 
   try {
-    const payload = jwt.verify(token, config.JWT_SECRET, {
-      algorithms: ["HS256"],
-    });
+    const payload = jwt.verify(token, config.JWT_SECRET, { algorithms: ["HS256"] });
     if (typeof payload === "string" || typeof payload.sub !== "string") {
       res.status(401).json({ error: "Sessão inválida." });
       return;

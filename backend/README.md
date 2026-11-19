@@ -66,6 +66,8 @@ A API ficará disponível em `http://localhost:3000`; `GET /api/health` verifica
 | `npm run dev --workspace backend` | Inicia a API com recarga automática |
 | `npm run build --workspace backend` | Compila TypeScript para `backend/dist` |
 | `npm run start --workspace backend` | Inicia a versão compilada |
+| `npm run format --workspace backend` | Formata o código e a configuração do backend com Prettier |
+| `npm run format:check --workspace backend` | Verifica a formatação do backend |
 | `npm run db:generate` | Gera o Prisma Client |
 | `npm run db:migrate` | Cria e aplica migrações em desenvolvimento |
 | `npm run db:migrate:deploy` | Aplica migrações pendentes no banco configurado para produção |

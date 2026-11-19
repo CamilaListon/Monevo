@@ -3,12 +3,13 @@ import cors from "cors";
 import express from "express";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
-import { config } from "./config.js";
-import { prisma } from "./db.js";
-import authRoutes from "./auth-routes.js";
-import billRoutes from "./bills.js";
-import dashboardRoutes from "./dashboard.js";
-import profileRoutes from "./profile.js";
+import { config } from "./config/config.js";
+import { prisma } from "./config/database.js";
+import authRoutes from "./routes/auth.routes.js";
+import billRoutes from "./routes/bills.routes.js";
+import dashboardRoutes from "./routes/dashboard.routes.js";
+import profileRoutes from "./routes/profile.routes.js";
+import { errorHandler, notFoundHandler } from "./middleware/error.middleware.js";
 
 const app = express();
 app.disable("x-powered-by");
@@ -42,23 +43,8 @@ app.use("/api/bills", billRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/profile", profileRoutes);
 
-app.use((_req, res) => res.status(404).json({ error: "Rota não encontrada." }));
-app.use((error: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  if (
-    typeof error === "object" &&
-    error !== null &&
-    "code" in error &&
-    error.code === "P1000"
-  ) {
-    console.error("PostgreSQL authentication failed. Verify DATABASE_URL in backend/.env.");
-    res.status(503).json({
-      error: "Falha de autenticação no PostgreSQL. Confira DATABASE_URL em backend/.env.",
-    });
-    return;
-  }
-  console.error(error);
-  res.status(500).json({ error: "Erro interno do servidor." });
-});
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 export default app;
 

@@ -8,6 +8,8 @@
     "build": "tsc -p tsconfig.json && node scripts/write-esm-package-manifest.mjs",
     "vercel-build": "npm run build && esbuild src/vercel.ts --bundle --platform=node --target=node20 --format=esm --packages=bundle --outfile=dist/vercel.js",
     "start": "node dist/src/server.js",
+    "format": "prettier --write \"src/**/*.ts\" \"prisma.config.ts\" \"package.json\" \"tsconfig.json\" \"scripts/**/*.{js,mjs,cjs,json}\"",
+    "format:check": "prettier --check \"src/**/*.ts\" \"prisma.config.ts\" \"package.json\" \"tsconfig.json\" \"scripts/**/*.{js,mjs,cjs,json}\"",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:migrate:deploy": "prisma migrate deploy"
@@ -38,6 +40,7 @@
     "@types/node": "^22.15.30",
     "@types/pg": "^8.15.5",
     "esbuild": "^0.25.12",
+    "prettier": "^3.10.1",
     "prisma": "^7.10.1",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3"
