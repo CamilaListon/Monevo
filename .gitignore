@@ -1,0 +1,8 @@
+node_modules
+dist
+frontend/dist
+backend/dist
+backend/.env
+frontend/.env.local
+*.tsbuildinfo
+.DS_Store
