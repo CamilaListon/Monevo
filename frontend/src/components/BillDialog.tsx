@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 import { ArrowRight, X } from "lucide-react";
 import { api } from "../utils/api";
 import type { Bill, BillInput } from "../types";
+import AlertDialog from "./AlertDialog";
 
 export default function BillDialog({
   value,
@@ -159,11 +160,6 @@ export default function BillDialog({
               maxLength={500}
             />
           </label>
-          {error && (
-            <div role="alert" className="form-error">
-              {error}
-            </div>
-          )}
           <div className="dialog-actions">
             <button
               type="button"
@@ -187,6 +183,13 @@ export default function BillDialog({
           </div>
         </form>
       </section>
+      {error && (
+        <AlertDialog
+          title="Não foi possível salvar"
+          description={error}
+          onClose={() => setError("")}
+        />
+      )}
     </div>
   );
 }

@@ -1,6 +1,5 @@
 import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import {
-  CheckCircle2,
   ImagePlus,
   KeyRound,
   LockKeyhole,
@@ -9,9 +8,9 @@ import {
   ShieldCheck,
   Upload,
   UserRound,
-  X,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import AlertDialog from "../components/AlertDialog";
 import ThemeToggle from "../components/ThemeToggle";
 import Sidebar from "../components/Sidebar";
 import { api, apiUrl } from "../utils/api";
@@ -238,23 +237,6 @@ export default function AccountPage({
               <p>Gerencie seus dados pessoais e sua segurança.</p>
             </div>
           </div>
-          {error && (
-            <div role="alert" className="dashboard-error">
-              {error}
-              <button onClick={() => setError("")}>
-                <X size={15} />
-              </button>
-            </div>
-          )}
-          {notice && (
-            <div role="status" className="account-notice">
-              <CheckCircle2 size={17} />
-              {notice}
-              <button onClick={() => setNotice("")} aria-label="Fechar aviso">
-                <X size={15} />
-              </button>
-            </div>
-          )}
           <div className="account-grid">
             <section className="panel account-panel">
               <div className="account-panel-heading">
@@ -418,6 +400,21 @@ export default function AccountPage({
           </footer>
         </div>
       </main>
+      {error && (
+        <AlertDialog
+          title="Não foi possível concluir"
+          description={error}
+          onClose={() => setError("")}
+        />
+      )}
+      {notice && (
+        <AlertDialog
+          title="Tudo certo"
+          description={notice}
+          tone="success"
+          onClose={() => setNotice("")}
+        />
+      )}
     </div>
   );
 }

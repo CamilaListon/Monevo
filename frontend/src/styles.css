@@ -1755,6 +1755,75 @@ tbody tr:last-child td {
   font-size: 9px;
 }
 
+.confirm-dialog {
+  position: relative;
+  width: min(410px, 100%);
+  padding: 26px;
+  border: 1px solid #edf0ea;
+  border-radius: 15px;
+  background: #fff;
+  box-shadow: 0 22px 70px #10201d35;
+  text-align: center;
+  animation: dialog-in 0.18s ease-out;
+}
+.confirm-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+}
+.confirm-dialog-icon {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 14px;
+  border-radius: 12px;
+  color: #c8912d;
+  background: #fff5dc;
+}
+.confirm-dialog-danger {
+  color: #dc6847;
+  background: #fff0e9;
+}
+.confirm-dialog h2 {
+  margin: 0 0 8px;
+  color: #173d33;
+  font:
+    600 19px "Poppins",
+    sans-serif;
+}
+.confirm-dialog p {
+  max-width: 340px;
+  margin: 0 auto;
+  color: #87938c;
+  font-size: 11px;
+  line-height: 1.65;
+}
+.confirm-dialog-actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #eff1ed;
+}
+.confirm-dialog-actions .button {
+  min-height: 40px;
+  font-size: 10px;
+}
+.button-danger {
+  color: #fff;
+  background: #dc6847;
+}
+.button-danger:hover {
+  background: #c95638;
+  box-shadow: 0 5px 16px #dc684725;
+}
+.alert-dialog-success {
+  color: #0a7c78;
+  background: #e4f2ee;
+}
+
 @media (min-width: 1450px) {
   .dashboard-content {
     padding-top: 38px;
@@ -2502,7 +2571,8 @@ html[data-theme="dark"] .preview-card,
 html[data-theme="dark"] .floating-badge,
 html[data-theme="dark"] .summary-card,
 html[data-theme="dark"] .panel,
-html[data-theme="dark"] .bill-dialog {
+html[data-theme="dark"] .bill-dialog,
+html[data-theme="dark"] .confirm-dialog {
   border-color: #2b3d34;
   background: #17251e;
 }

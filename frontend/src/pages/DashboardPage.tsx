@@ -14,10 +14,11 @@ import {
   ShieldCheck,
   Trash2,
   Wallet,
-  X,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import BillDialog from "../components/BillDialog";
+import AlertDialog from "../components/AlertDialog";
+import ConfirmDialog from "../components/ConfirmDialog";
 import StatusBadge from "../components/StatusBadge";
 import SummaryCard from "../components/SummaryCard";
 import ThemeToggle from "../components/ThemeToggle";
@@ -60,6 +61,8 @@ export default function DashboardPage({
   const [search, setSearch] = useState("");
   const [mobileMenu, setMobileMenu] = useState(false);
   const [activeNav, setActiveNav] = useState("Visão geral");
+  const [billToDelete, setBillToDelete] = useState<Bill | null>(null);
+  const [deleteBusy, setDeleteBusy] = useState(false);
 
   async function loadDashboard() {
     setLoading(true);
@@ -112,21 +115,19 @@ export default function DashboardPage({
   }
 
   async function deleteBill(bill: Bill) {
-    if (
-      !window.confirm(
-        `Excluir "${bill.title}"? Esta ação não pode ser desfeita.`,
-      )
-    )
-      return;
+    setDeleteBusy(true);
     try {
       await api<void>(`/bills/${bill.id}`, { method: "DELETE" });
       await loadDashboard();
+      setBillToDelete(null);
     } catch (requestError) {
       setError(
         requestError instanceof Error
           ? requestError.message
           : "Não foi possível excluir a conta.",
       );
+    } finally {
+      setDeleteBusy(false);
     }
   }
 
@@ -251,14 +252,6 @@ export default function DashboardPage({
               <Plus size={18} /> Nova conta
             </button>
           </div>
-          {error && (
-            <div role="alert" className="dashboard-error">
-              {error}
-              <button onClick={() => setError("")}>
-                <X size={15} />
-              </button>
-            </div>
-          )}
           <section className="summary-grid" aria-label="Resumo mensal">
             <SummaryCard
               title="Total de contas"
@@ -473,7 +466,7 @@ export default function DashboardPage({
                             </button>
                             <button
                               title="Excluir conta"
-                              onClick={() => void deleteBill(bill)}
+                              onClick={() => setBillToDelete(bill)}
                               className="row-action action-delete"
                             >
                               <Trash2 size={15} />
@@ -550,6 +543,26 @@ export default function DashboardPage({
             setDialog(null);
             await loadDashboard();
           }}
+        />
+      )}
+      {billToDelete && (
+        <ConfirmDialog
+          title="Excluir conta?"
+          description={`Excluir "${billToDelete.title}"? Esta ação não pode ser desfeita.`}
+          confirmLabel="Excluir conta"
+          destructive
+          busy={deleteBusy}
+          onConfirm={() => void deleteBill(billToDelete)}
+          onClose={() => {
+            if (!deleteBusy) setBillToDelete(null);
+          }}
+        />
+      )}
+      {error && (
+        <AlertDialog
+          title="Não foi possível concluir"
+          description={error}
+          onClose={() => setError("")}
         />
       )}
     </div>
