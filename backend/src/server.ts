@@ -52,14 +52,18 @@ app.use((error: unknown, _req: express.Request, res: express.Response, _next: ex
   res.status(500).json({ error: "Erro interno do servidor." });
 });
 
-const server = app.listen(config.PORT, () => {
-  console.log(`Monevo API listening on http://localhost:${config.PORT}`);
-});
+export default app;
 
-async function shutdown(): Promise<void> {
-  server.close();
-  await prisma.$disconnect();
+if (process.env.VERCEL !== "1") {
+  const server = app.listen(config.PORT, () => {
+    console.log(`Monevo API listening on http://localhost:${config.PORT}`);
+  });
+
+  async function shutdown(): Promise<void> {
+    server.close();
+    await prisma.$disconnect();
+  }
+
+  process.on("SIGINT", () => void shutdown());
+  process.on("SIGTERM", () => void shutdown());
 }
-
-process.on("SIGINT", () => void shutdown());
-process.on("SIGTERM", () => void shutdown());
