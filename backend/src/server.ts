@@ -25,7 +25,15 @@ const authLimiter = rateLimit({
   message: { error: "Muitas tentativas. Tente novamente em alguns minutos." },
 });
 
-app.get("/api/health", (_req, res) => res.json({ status: "ok" }));
+app.get("/api/health", async (_req, res) => {
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    res.json({ status: "ok" });
+  } catch (error) {
+    console.error("Database health check failed:", error);
+    res.status(503).json({ status: "error", error: "Banco de dados indisponível." });
+  }
+});
 app.use("/api/auth/register", authLimiter);
 app.use("/api/auth/login", authLimiter);
 app.use("/api/profile/password", authLimiter);
