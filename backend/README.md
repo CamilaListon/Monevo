@@ -90,5 +90,6 @@ Configure as variáveis do backend nas configurações do projeto Vercel, para c
 - `DATABASE_URL`: URI PostgreSQL do Supabase.
 - `JWT_SECRET`: segredo aleatório com pelo menos 32 caracteres.
 - `FRONTEND_URL`: origem pública da aplicação, por exemplo `https://monevo.vercel.app`.
+- `NODE_ENV`: `production`.
 
 Depois de atualizar `DATABASE_URL` para a conexão de produção, aplique as migrações pendentes a partir da raiz do repositório com `npm run db:migrate:deploy`. Não use `db:migrate` em produção.
