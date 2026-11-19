@@ -68,6 +68,7 @@ A API ficará disponível em `http://localhost:3000`; `GET /api/health` verifica
 | `npm run start --workspace backend` | Inicia a versão compilada |
 | `npm run db:generate` | Gera o Prisma Client |
 | `npm run db:migrate` | Cria e aplica migrações em desenvolvimento |
+| `npm run db:migrate:deploy` | Aplica migrações pendentes no banco configurado para produção |
 
 ## Endpoints principais
 
@@ -80,4 +81,14 @@ A API ficará disponível em `http://localhost:3000`; `GET /api/health` verifica
 
 As senhas são armazenadas com hash. A sessão usa JWT em cookie HttpOnly; as rotas de dados e de foto exigem autenticação e operam no escopo do usuário autenticado. A API aplica Helmet, CORS e limite de tentativas nas rotas sensíveis.
 
-Fotos JPEG, PNG e WebP de até 5 MB são validadas e armazenadas em `backend/uploads/avatars`, fora da pasta pública. A rota de imagem exige autenticação. Essa pasta é ignorada pelo Git; inclua-a nos backups. Em produção com múltiplas instâncias, configure armazenamento de arquivos compartilhado.
+Fotos JPEG, PNG e WebP de até 4 MB são validadas e armazenadas como texto Base64 no PostgreSQL, junto com seu MIME type. A rota de imagem exige autenticação. Fotos que já estavam no formato antigo em disco são lidas localmente como compatibilidade; novos uploads não dependem do filesystem.
+
+## Deploy na Vercel
+
+Configure as variáveis do backend nas configurações do projeto Vercel, para cada ambiente necessário:
+
+- `DATABASE_URL`: URI PostgreSQL do Supabase.
+- `JWT_SECRET`: segredo aleatório com pelo menos 32 caracteres.
+- `FRONTEND_URL`: origem pública da aplicação, por exemplo `https://monevo.vercel.app`.
+
+Depois de atualizar `DATABASE_URL` para a conexão de produção, aplique as migrações pendentes a partir da raiz do repositório com `npm run db:migrate:deploy`. Não use `db:migrate` em produção.

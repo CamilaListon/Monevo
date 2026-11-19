@@ -12,7 +12,7 @@ O Monevo é uma aplicação web responsiva para reunir contas pessoais, vencimen
 - Atualizar seu nome, foto de perfil e senha na página **Minha conta**.
 - Alternar entre tema claro e escuro.
 
-Cada usuário tem seu próprio espaço: as contas e a foto de perfil são acessíveis somente após a autenticação daquele usuário. Fotos aceitas: JPEG, PNG e WebP, com até 5 MB.
+Cada usuário tem seu próprio espaço: as contas e a foto de perfil são acessíveis somente após a autenticação daquele usuário. Fotos aceitas: JPEG, PNG e WebP, com até 4 MB.
 
 ## Sobre esta versão
 

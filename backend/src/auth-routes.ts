@@ -16,13 +16,13 @@ const credentialsSchema = z.object({
   password: z.string().min(8).max(72).refine((password) => Buffer.byteLength(password, "utf8") <= 72),
 });
 
-function presentUser(user: { id: string; name: string; email: string; avatarPath: string | null }) {
+function presentUser(user: { id: string; name: string; email: string; avatarMimeType: string | null }) {
   return {
     id: user.id,
     name: user.name,
     email: user.email,
-    avatarUrl: user.avatarPath
-      ? `/profile/avatar?v=${encodeURIComponent(user.avatarPath)}`
+    avatarUrl: user.avatarMimeType
+      ? `/profile/avatar?v=${encodeURIComponent(user.avatarMimeType)}`
       : null,
   };
 }
@@ -41,7 +41,7 @@ router.post("/register", async (req, res) => {
   try {
     const user = await prisma.user.create({
       data: { name, email, passwordHash },
-      select: { id: true, name: true, email: true, avatarPath: true },
+      select: { id: true, name: true, email: true, avatarMimeType: true },
     });
     setSessionCookie(res, user.id);
     res.status(201).json({ user: presentUser(user) });
@@ -86,7 +86,7 @@ router.post("/logout", (_req, res) => {
 router.get("/me", requireAuth, async (req: AuthenticatedRequest, res) => {
   const user = await prisma.user.findUnique({
     where: { id: req.userId },
-    select: { id: true, name: true, email: true, avatarPath: true },
+    select: { id: true, name: true, email: true, avatarMimeType: true },
   });
   if (!user) {
     clearSessionCookie(res);
