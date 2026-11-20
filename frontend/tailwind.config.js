@@ -43,10 +43,21 @@ export default {
           from: { opacity: "0", transform: "translateY(8px) scale(0.99)" },
           to: { opacity: "1", transform: "translateY(0) scale(1)" },
         },
+        "overdue-pulse": {
+          "0%, 100%": {
+            backgroundColor: "var(--overdue-bg)",
+            boxShadow: "0 0 0 0 var(--overdue-ring)",
+          },
+          "50%": {
+            backgroundColor: "var(--overdue-bg-pulse)",
+            boxShadow: "0 0 0 3px var(--overdue-ring)",
+          },
+        },
       },
       animation: {
         spin: "spin 0.75s linear infinite",
         "dialog-in": "dialog-in 0.18s ease-out",
+        "overdue-pulse": "overdue-pulse 1.3s ease-in-out infinite",
       },
     },
   },

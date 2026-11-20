@@ -547,7 +547,10 @@ export default function DashboardPage({
                             {formatCurrency(bill.amount)}
                           </td>
                           <td className={tableCellClasses}>
-                            <StatusBadge status={bill.status} />
+                            <StatusBadge
+                              status={bill.status}
+                              animateBackground={bill.status === "overdue"}
+                            />
                           </td>
                           <td className={tableCellClasses}>
                             {bill.recurring || bill.recurrenceSourceId
@@ -637,7 +640,10 @@ export default function DashboardPage({
                       </div>
                       <div className="mt-3 flex flex-wrap items-center gap-2 text-[10px] text-[#68766f] dark:text-[#c1d0c7]">
                         <span>{formatDate(bill.dueDate)}</span>
-                        <StatusBadge status={bill.status} />
+                        <StatusBadge
+                          status={bill.status}
+                          animateBackground={bill.status === "overdue"}
+                        />
                         <span className="rounded-md bg-[#f4f6f2] px-2 py-1 dark:bg-[#1c2c24]">
                           {bill.recurring || bill.recurrenceSourceId
                             ? "Recorrente"
