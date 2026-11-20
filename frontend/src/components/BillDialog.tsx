@@ -78,7 +78,7 @@ export default function BillDialog({
 
   return (
     <div
-      className={modalBackdropClasses}
+      className={`${modalBackdropClasses} max-[600px]:!items-center`}
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}

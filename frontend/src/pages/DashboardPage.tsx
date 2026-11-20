@@ -45,6 +45,13 @@ import {
 
 const DashboardCharts = lazy(() => import("../components/DashboardCharts"));
 
+const tableHeaderClasses =
+  "h-[34px] border-b border-[#edf0eb] px-3 text-[10px] font-semibold tracking-[0.65px] text-[#a1aaa4] dark:border-dark-border";
+const tableCellClasses =
+  "h-[57px] border-b border-[#f0f2ee] px-3 text-[12px] text-[#68766f] dark:border-dark-border";
+const tableAmountClasses =
+  "h-[57px] border-b border-[#f0f2ee] px-3 text-[10px] font-semibold text-[#31483e] dark:border-dark-border dark:text-[#e2ece5]";
+
 export default function DashboardPage({
   user,
   theme,
@@ -456,133 +463,211 @@ export default function DashboardPage({
                 )}
               </div>
             ) : (
-              <div className="w-full min-w-0 max-w-full overscroll-x-contain overflow-x-auto">
-                <table className="w-full min-w-[610px] border-collapse text-left [white-space:nowrap] max-[600px]:min-w-[590px]">
-                  <thead>
-                    <tr>
-                      <th className="h-[34px] border-b border-[#edf0eb] text-[10px] font-semibold tracking-[0.65px] text-[#a1aaa4] dark:border-dark-border">
-                        CONTA
-                      </th>
-                      <th className="h-[34px] border-b border-[#edf0eb] text-[10px] font-semibold tracking-[0.65px] text-[#a1aaa4] dark:border-dark-border">
-                        CATEGORIA
-                      </th>
-                      <th className="h-[34px] border-b border-[#edf0eb] text-[10px] font-semibold tracking-[0.65px] text-[#a1aaa4] dark:border-dark-border">
-                        VENCIMENTO
-                      </th>
-                      <th className="h-[34px] border-b border-[#edf0eb] text-[10px] font-semibold tracking-[0.65px] text-[#a1aaa4] dark:border-dark-border">
-                        VALOR
-                      </th>
-                      <th className="h-[34px] border-b border-[#edf0eb] text-[10px] font-semibold tracking-[0.65px] text-[#a1aaa4] dark:border-dark-border">
-                        SITUAÇÃO
-                      </th>
-                      <th className="h-[34px] border-b border-[#edf0eb] text-[10px] font-semibold tracking-[0.65px] text-[#a1aaa4] dark:border-dark-border">
-                        RECORRENTE
-                      </th>
-                      <th className="h-[34px] border-b border-[#edf0eb] text-[10px] font-semibold tracking-[0.65px] text-[#a1aaa4] dark:border-dark-border">
-                        <span className="sr-only">Ações</span>
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {bills.map((bill) => (
-                      <tr key={bill.id}>
-                        <td className="h-[57px] border-b border-[#f0f2ee] text-[12px] text-[#68766f] dark:border-dark-border">
-                          <div className="flex items-center gap-[9px]">
-                            <span
-                              className={`grid size-[31px] place-items-center rounded-lg ${bill.status === "paid" ? "bg-[#e7f3ee] text-teal" : bill.status === "overdue" ? "bg-[#fff0e9] text-[#e46e4c]" : "bg-[#fff5dd] text-[#bc8e3b]"}`}
-                            >
-                              <FileText size={16} />
-                            </span>
-                            <div>
-                              <b className="block max-w-[175px] overflow-hidden text-ellipsis text-[12px] font-semibold text-[#294239] dark:text-[#e2ece5]">
-                                {bill.title}
-                              </b>
-                              <small className="mt-1 block max-w-[175px] overflow-hidden text-ellipsis text-[12px] text-[#9ba59e]">
-                                {bill.notes || bill.category}
-                              </small>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="h-[57px] border-b border-[#f0f2ee] text-[12px] text-[#68766f] dark:border-dark-border">
-                          <span className="rounded-[5px] bg-[#f4f6f2] px-2 py-[5px] text-[12px] text-[#728078] dark:bg-[#1c2c24] dark:text-[#a5b5ac]">
-                            {bill.category}
-                          </span>
-                        </td>
-                        <td className="h-[57px] border-b border-[#f0f2ee] text-[12px] text-[#68766f] dark:border-dark-border">
-                          <span
-                            className={
-                              bill.status === "overdue" ? "due-overdue" : ""
-                            }
-                          >
-                            {formatDate(bill.dueDate)}
-                          </span>
-                        </td>
-                        <td className="h-[57px] border-b border-[#f0f2ee] text-[10px] font-semibold text-[#31483e] dark:border-dark-border dark:text-[#e2ece5]">
-                          {formatCurrency(bill.amount)}
-                        </td>
-                        <td className="h-[57px] border-b border-[#f0f2ee] text-[12px] text-[#68766f] dark:border-dark-border">
-                          <StatusBadge status={bill.status} />
-                        </td>
-                        <td className="h-[57px] border-b border-[#f0f2ee] text-[12px] text-[#68766f] dark:border-dark-border">
-                          {bill.recurring || bill.recurrenceSourceId
-                            ? "Sim"
-                            : "Não"}
-                        </td>
-                        <td className="h-[57px] border-b border-[#f0f2ee] text-[12px] text-[#68766f] dark:border-dark-border">
-                          <div className="flex justify-end gap-1">
-                            <button
-                              title={
-                                bill.status === "paid"
-                                  ? "Marcar como pendente"
-                                  : "Marcar como paga"
-                              }
-                              aria-label={
-                                bill.status === "paid"
-                                  ? "Marcar como pendente"
-                                  : "Marcar como paga"
-                              }
-                              onClick={() => void togglePayment(bill)}
-                              className={`grid size-[27px] place-items-center rounded-md ${bill.status === "paid" ? "bg-[#edf5f0] text-teal dark:bg-[#20372d] dark:text-[#a9e3ce]" : "bg-transparent text-[#9aa59e] hover:bg-[#edf5f0] hover:text-teal"}`}
-                            >
-                              <Check size={15} />
-                            </button>
-                            <button
-                              title="Editar conta"
-                              onClick={() => setDialog(bill)}
-                              className={`${iconButtonClasses} !size-[27px] !border-0 !bg-transparent !text-[#9aa59e]`}
-                            >
-                              <Pencil size={15} />
-                            </button>
-                            <button
-                              title={
-                                bill.recurring || bill.recurrenceSourceId
-                                  ? "Tirar da recorrência"
-                                  : "Tornar recorrente"
-                              }
-                              aria-label={
-                                bill.recurring || bill.recurrenceSourceId
-                                  ? "Tirar da recorrência"
-                                  : "Tornar recorrente"
-                              }
-                              onClick={() => void toggleRecurrence(bill)}
-                              className={`grid size-[27px] place-items-center rounded-md ${bill.recurring || bill.recurrenceSourceId ? "bg-[#edf5f0] text-teal dark:bg-[#20372d] dark:text-[#a9e3ce]" : "bg-transparent text-[#9aa59e] hover:bg-[#edf5f0] hover:text-teal"}`}
-                            >
-                              <Repeat size={15} />
-                            </button>
-                            <button
-                              title="Excluir conta"
-                              onClick={() => setBillToDelete(bill)}
-                              className="grid size-[27px] place-items-center rounded-md bg-transparent text-[#9aa59e] hover:bg-[#fff1eb] hover:text-[#dd6245]"
-                            >
-                              <Trash2 size={15} />
-                            </button>
-                          </div>
-                        </td>
+              <>
+                <div className="w-full min-w-0 max-w-full overscroll-x-contain overflow-x-auto max-[820px]:hidden">
+                  <table className="w-full min-w-[720px] border-collapse text-left [white-space:nowrap]">
+                    <thead>
+                      <tr>
+                        <th className={tableHeaderClasses}>CONTA</th>
+                        <th className={tableHeaderClasses}>CATEGORIA</th>
+                        <th className={tableHeaderClasses}>VENCIMENTO</th>
+                        <th className={tableHeaderClasses}>VALOR</th>
+                        <th className={tableHeaderClasses}>SITUAÇÃO</th>
+                        <th className={tableHeaderClasses}>RECORRENTE</th>
+                        <th className={tableHeaderClasses}>
+                          <span className="sr-only">Ações</span>
+                        </th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody>
+                      {bills.map((bill) => (
+                        <tr key={bill.id}>
+                          <td className={tableCellClasses}>
+                            <div className="flex items-center gap-[9px]">
+                              <span
+                                className={`grid size-[31px] place-items-center rounded-lg ${bill.status === "paid" ? "bg-[#e7f3ee] text-teal" : bill.status === "overdue" ? "bg-[#fff0e9] text-[#e46e4c]" : "bg-[#fff5dd] text-[#bc8e3b]"}`}
+                              >
+                                <FileText size={16} />
+                              </span>
+                              <div>
+                                <b className="block max-w-[175px] overflow-hidden text-ellipsis text-[12px] font-semibold text-[#294239] dark:text-[#e2ece5]">
+                                  {bill.title}
+                                </b>
+                                <small className="mt-1 block max-w-[175px] overflow-hidden text-ellipsis text-[12px] text-[#9ba59e]">
+                                  {bill.notes || bill.category}
+                                </small>
+                              </div>
+                            </div>
+                          </td>
+                          <td className={tableCellClasses}>
+                            <span className="rounded-[5px] bg-[#f4f6f2] px-2 py-[5px] text-[12px] text-[#728078] dark:bg-[#1c2c24] dark:text-[#a5b5ac]">
+                              {bill.category}
+                            </span>
+                          </td>
+                          <td className={tableCellClasses}>
+                            <span
+                              className={
+                                bill.status === "overdue" ? "due-overdue" : ""
+                              }
+                            >
+                              {formatDate(bill.dueDate)}
+                            </span>
+                          </td>
+                          <td className={tableAmountClasses}>
+                            {formatCurrency(bill.amount)}
+                          </td>
+                          <td className={tableCellClasses}>
+                            <StatusBadge status={bill.status} />
+                          </td>
+                          <td className={tableCellClasses}>
+                            {bill.recurring || bill.recurrenceSourceId
+                              ? "Sim"
+                              : "Não"}
+                          </td>
+                          <td className={tableCellClasses}>
+                            <div className="flex justify-end gap-1">
+                              <button
+                                title={
+                                  bill.status === "paid"
+                                    ? "Marcar como pendente"
+                                    : "Marcar como paga"
+                                }
+                                aria-label={
+                                  bill.status === "paid"
+                                    ? "Marcar como pendente"
+                                    : "Marcar como paga"
+                                }
+                                onClick={() => void togglePayment(bill)}
+                                className={`grid size-[27px] place-items-center rounded-md ${bill.status === "paid" ? "bg-[#edf5f0] text-teal dark:bg-[#20372d] dark:text-[#a9e3ce]" : "bg-transparent text-[#9aa59e] hover:bg-[#edf5f0] hover:text-teal"}`}
+                              >
+                                <Check size={15} />
+                              </button>
+                              <button
+                                title="Editar conta"
+                                onClick={() => setDialog(bill)}
+                                className={`${iconButtonClasses} !size-[27px] !border-0 !bg-transparent !text-[#9aa59e]`}
+                              >
+                                <Pencil size={15} />
+                              </button>
+                              <button
+                                title={
+                                  bill.recurring || bill.recurrenceSourceId
+                                    ? "Tirar da recorrência"
+                                    : "Tornar recorrente"
+                                }
+                                aria-label={
+                                  bill.recurring || bill.recurrenceSourceId
+                                    ? "Tirar da recorrência"
+                                    : "Tornar recorrente"
+                                }
+                                onClick={() => void toggleRecurrence(bill)}
+                                className={`grid size-[27px] place-items-center rounded-md ${bill.recurring || bill.recurrenceSourceId ? "bg-[#edf5f0] text-teal dark:bg-[#20372d] dark:text-[#a9e3ce]" : "bg-transparent text-[#9aa59e] hover:bg-[#edf5f0] hover:text-teal"}`}
+                              >
+                                <Repeat size={15} />
+                              </button>
+                              <button
+                                title="Excluir conta"
+                                onClick={() => setBillToDelete(bill)}
+                                className="grid size-[27px] place-items-center rounded-md bg-transparent text-[#9aa59e] hover:bg-[#fff1eb] hover:text-[#dd6245]"
+                              >
+                                <Trash2 size={15} />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <div className="hidden min-w-0 space-y-2 overflow-hidden pb-3 max-[820px]:block">
+                  {bills.map((bill) => (
+                    <article
+                      key={bill.id}
+                      className="min-w-0 overflow-hidden rounded-lg border border-[#e8ede7] p-3 dark:border-dark-border"
+                    >
+                      <div className="flex min-w-0 items-start justify-between gap-2">
+                        <div className="flex min-w-0 items-start gap-2">
+                          <span
+                            className={`grid size-[31px] shrink-0 place-items-center rounded-lg ${bill.status === "paid" ? "bg-[#e7f3ee] text-teal" : bill.status === "overdue" ? "bg-[#fff0e9] text-[#e46e4c]" : "bg-[#fff5dd] text-[#bc8e3b]"}`}
+                          >
+                            <FileText size={16} />
+                          </span>
+                          <div className="min-w-0">
+                            <b className="block break-words text-[12px] font-semibold text-[#294239] dark:text-[#e2ece5]">
+                              {bill.title}
+                            </b>
+                            <small className="mt-1 block break-words text-[11px] text-[#9ba59e]">
+                              {bill.notes || bill.category}
+                            </small>
+                          </div>
+                        </div>
+                        <b className="shrink-0 text-[12px] font-semibold text-[#31483e] dark:text-[#e2ece5]">
+                          {formatCurrency(bill.amount)}
+                        </b>
+                      </div>
+                      <div className="mt-3 flex flex-wrap items-center gap-2 text-[10px] text-[#68766f] dark:text-[#c1d0c7]">
+                        <span>{formatDate(bill.dueDate)}</span>
+                        <StatusBadge status={bill.status} />
+                        <span className="rounded-md bg-[#f4f6f2] px-2 py-1 dark:bg-[#1c2c24]">
+                          {bill.recurring || bill.recurrenceSourceId
+                            ? "Recorrente"
+                            : "Não recorrente"}
+                        </span>
+                      </div>
+                      <div className="mt-2 flex justify-end gap-1 border-t border-[#f0f2ee] pt-2 dark:border-dark-border">
+                        <button
+                          title={
+                            bill.status === "paid"
+                              ? "Marcar como pendente"
+                              : "Marcar como paga"
+                          }
+                          aria-label={
+                            bill.status === "paid"
+                              ? "Marcar como pendente"
+                              : "Marcar como paga"
+                          }
+                          onClick={() => void togglePayment(bill)}
+                          className={`grid size-[27px] place-items-center rounded-md ${bill.status === "paid" ? "bg-[#edf5f0] text-teal dark:bg-[#20372d] dark:text-[#a9e3ce]" : "bg-transparent text-[#9aa59e] hover:bg-[#edf5f0] hover:text-teal"}`}
+                        >
+                          <Check size={15} />
+                        </button>
+                        <button
+                          title="Editar conta"
+                          aria-label="Editar conta"
+                          onClick={() => setDialog(bill)}
+                          className={`${iconButtonClasses} !size-[27px] !border-0 !bg-transparent !text-[#9aa59e]`}
+                        >
+                          <Pencil size={15} />
+                        </button>
+                        <button
+                          title={
+                            bill.recurring || bill.recurrenceSourceId
+                              ? "Tirar da recorrência"
+                              : "Tornar recorrente"
+                          }
+                          aria-label={
+                            bill.recurring || bill.recurrenceSourceId
+                              ? "Tirar da recorrência"
+                              : "Tornar recorrente"
+                          }
+                          onClick={() => void toggleRecurrence(bill)}
+                          className={`grid size-[27px] place-items-center rounded-md ${bill.recurring || bill.recurrenceSourceId ? "bg-[#edf5f0] text-teal dark:bg-[#20372d] dark:text-[#a9e3ce]" : "bg-transparent text-[#9aa59e] hover:bg-[#edf5f0] hover:text-teal"}`}
+                        >
+                          <Repeat size={15} />
+                        </button>
+                        <button
+                          title="Excluir conta"
+                          aria-label="Excluir conta"
+                          onClick={() => setBillToDelete(bill)}
+                          className="grid size-[27px] place-items-center rounded-md bg-transparent text-[#9aa59e] hover:bg-[#fff1eb] hover:text-[#dd6245]"
+                        >
+                          <Trash2 size={15} />
+                        </button>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </>
             )}
           </section>
           <section
@@ -648,91 +733,147 @@ export default function DashboardPage({
                 </p>
               </div>
             ) : (
-              <div className="w-full min-w-0 max-w-full overscroll-x-contain overflow-x-auto">
-                <table className="w-full min-w-0 border-collapse text-left [white-space:nowrap] max-[600px]:table-fixed max-[600px]:[white-space:normal]">
-                  <thead>
-                    <tr>
-                      <th className="h-[34px] border-b border-[#edf0eb] text-[10px] font-semibold tracking-[0.65px] text-[#a1aaa4] dark:border-dark-border">
-                        CONTA
-                      </th>
-                      <th className="h-[34px] border-b border-[#edf0eb] text-[10px] font-semibold tracking-[0.65px] text-[#a1aaa4] dark:border-dark-border max-[600px]:hidden">
-                        CATEGORIA
-                      </th>
-                      <th className="h-[34px] border-b border-[#edf0eb] text-[10px] font-semibold tracking-[0.65px] text-[#a1aaa4] dark:border-dark-border">
-                        VENCIMENTO INICIAL
-                      </th>
-                      <th className="h-[34px] border-b border-[#edf0eb] text-[10px] font-semibold tracking-[0.65px] text-[#a1aaa4] dark:border-dark-border">
-                        VALOR
-                      </th>
-                      <th className="h-[34px] border-b border-[#edf0eb] text-[10px] font-semibold tracking-[0.65px] text-[#a1aaa4] dark:border-dark-border">
-                        <span className="sr-only">Ações</span>
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredRecurringBills.map((bill) => (
-                      <tr key={bill.id}>
-                        <td className="h-[57px] border-b border-[#f0f2ee] text-[12px] text-[#68766f] dark:border-dark-border">
-                          <div className="flex items-center gap-[9px]">
-                            <span
-                              className={`grid size-[31px] shrink-0 place-items-center rounded-lg max-[600px]:size-6 ${bill.status === "paid" ? "bg-[#e7f3ee] text-teal" : bill.status === "overdue" ? "bg-[#fff0e9] text-[#e46e4c]" : "bg-[#fff5dd] text-[#bc8e3b]"}`}
-                            >
-                              <Repeat size={16} />
-                            </span>
-                            <div className="min-w-0">
-                              <b className="block max-w-[175px] overflow-hidden text-ellipsis text-[12px] font-semibold text-[#294239] dark:text-[#e2ece5] max-[600px]:truncate">
-                                {bill.title}
-                              </b>
-                              <small className="mt-1 block max-w-[175px] overflow-hidden text-ellipsis text-[12px] text-[#9ba59e] max-[600px]:truncate">
-                                {bill.notes || bill.category}
-                              </small>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="h-[57px] border-b border-[#f0f2ee] text-[12px] text-[#68766f] dark:border-dark-border max-[600px]:hidden">
-                          <span className="rounded-[5px] bg-[#f4f6f2] px-2 py-[5px] text-[12px] text-[#728078] dark:bg-[#1c2c24] dark:text-[#a5b5ac]">
-                            {bill.category}
-                          </span>
-                        </td>
-                        <td className="h-[57px] border-b border-[#f0f2ee] text-[12px] text-[#68766f] dark:border-dark-border">
-                          {formatDate(bill.dueDate)}
-                        </td>
-                        <td className="h-[57px] border-b border-[#f0f2ee] text-[10px] font-semibold text-[#31483e] dark:border-dark-border dark:text-[#e2ece5]">
-                          {formatCurrency(bill.amount)}
-                        </td>
-                        <td className="h-[57px] border-b border-[#f0f2ee] text-[12px] text-[#68766f] dark:border-dark-border">
-                          <div className="flex justify-end gap-1 max-[600px]:justify-around max-[600px]:gap-0">
-                            <button
-                              title="Editar conta recorrente"
-                              aria-label="Editar conta recorrente"
-                              onClick={() => setDialog(bill)}
-                              className={`${iconButtonClasses} !size-[27px] !border-0 !bg-transparent !text-[#9aa59e] max-[600px]:!size-5`}
-                            >
-                              <Pencil size={15} />
-                            </button>
-                            <button
-                              title="Tirar da recorrência"
-                              aria-label="Tirar da recorrência"
-                              onClick={() => void toggleRecurrence(bill)}
-                              className="grid size-[27px] place-items-center rounded-md bg-[#edf5f0] text-teal dark:bg-[#20372d] dark:text-[#a9e3ce] max-[600px]:size-5"
-                            >
-                              <Repeat size={15} />
-                            </button>
-                            <button
-                              title="Excluir conta"
-                              aria-label="Excluir conta"
-                              onClick={() => setBillToDelete(bill)}
-                              className="grid size-[27px] place-items-center rounded-md bg-transparent text-[#9aa59e] hover:bg-[#fff1eb] hover:text-[#dd6245] max-[600px]:size-5"
-                            >
-                              <Trash2 size={15} />
-                            </button>
-                          </div>
-                        </td>
+              <>
+                <div className="w-full min-w-0 max-w-full overscroll-x-contain overflow-x-auto max-[820px]:hidden">
+                  <table className="w-full min-w-[620px] border-collapse text-left [white-space:nowrap]">
+                    <thead>
+                      <tr>
+                        <th className={tableHeaderClasses}>CONTA</th>
+                        <th className={tableHeaderClasses}>CATEGORIA</th>
+                        <th className={tableHeaderClasses}>
+                          VENCIMENTO INICIAL
+                        </th>
+                        <th className={tableHeaderClasses}>VALOR</th>
+                        <th className={tableHeaderClasses}>
+                          <span className="sr-only">Ações</span>
+                        </th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody>
+                      {filteredRecurringBills.map((bill) => (
+                        <tr key={bill.id}>
+                          <td className={tableCellClasses}>
+                            <div className="flex items-center gap-[9px]">
+                              <span
+                                className={`grid size-[31px] shrink-0 place-items-center rounded-lg max-[600px]:size-6 ${bill.status === "paid" ? "bg-[#e7f3ee] text-teal" : bill.status === "overdue" ? "bg-[#fff0e9] text-[#e46e4c]" : "bg-[#fff5dd] text-[#bc8e3b]"}`}
+                              >
+                                <Repeat size={16} />
+                              </span>
+                              <div className="min-w-0">
+                                <b className="block max-w-[175px] overflow-hidden text-ellipsis text-[12px] font-semibold text-[#294239] dark:text-[#e2ece5] max-[600px]:truncate">
+                                  {bill.title}
+                                </b>
+                                <small className="mt-1 block max-w-[175px] overflow-hidden text-ellipsis text-[12px] text-[#9ba59e] max-[600px]:truncate">
+                                  {bill.notes || bill.category}
+                                </small>
+                              </div>
+                            </div>
+                          </td>
+                          <td className={tableCellClasses}>
+                            <span className="rounded-[5px] bg-[#f4f6f2] px-2 py-[5px] text-[12px] text-[#728078] dark:bg-[#1c2c24] dark:text-[#a5b5ac]">
+                              {bill.category}
+                            </span>
+                          </td>
+                          <td className={tableCellClasses}>
+                            {formatDate(bill.dueDate)}
+                          </td>
+                          <td className={tableAmountClasses}>
+                            {formatCurrency(bill.amount)}
+                          </td>
+                          <td className={tableCellClasses}>
+                            <div className="flex justify-end gap-1">
+                              <button
+                                title="Editar conta recorrente"
+                                aria-label="Editar conta recorrente"
+                                onClick={() => setDialog(bill)}
+                                className={`${iconButtonClasses} !size-[27px] !border-0 !bg-transparent !text-[#9aa59e]`}
+                              >
+                                <Pencil size={15} />
+                              </button>
+                              <button
+                                title="Tirar da recorrência"
+                                aria-label="Tirar da recorrência"
+                                onClick={() => void toggleRecurrence(bill)}
+                                className="grid size-[27px] place-items-center rounded-md bg-[#edf5f0] text-teal dark:bg-[#20372d] dark:text-[#a9e3ce]"
+                              >
+                                <Repeat size={15} />
+                              </button>
+                              <button
+                                title="Excluir conta"
+                                aria-label="Excluir conta"
+                                onClick={() => setBillToDelete(bill)}
+                                className="grid size-[27px] place-items-center rounded-md bg-transparent text-[#9aa59e] hover:bg-[#fff1eb] hover:text-[#dd6245]"
+                              >
+                                <Trash2 size={15} />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <div className="hidden min-w-0 space-y-2 overflow-hidden pb-3 max-[820px]:block">
+                  {filteredRecurringBills.map((bill) => (
+                    <article
+                      key={bill.id}
+                      className="min-w-0 overflow-hidden rounded-lg border border-[#e8ede7] p-3 dark:border-dark-border"
+                    >
+                      <div className="flex min-w-0 items-start justify-between gap-2">
+                        <div className="flex min-w-0 items-start gap-2">
+                          <span
+                            className={`grid size-[31px] shrink-0 place-items-center rounded-lg ${bill.status === "paid" ? "bg-[#e7f3ee] text-teal" : bill.status === "overdue" ? "bg-[#fff0e9] text-[#e46e4c]" : "bg-[#fff5dd] text-[#bc8e3b]"}`}
+                          >
+                            <Repeat size={16} />
+                          </span>
+                          <div className="min-w-0">
+                            <b className="block break-words text-[12px] font-semibold text-[#294239] dark:text-[#e2ece5]">
+                              {bill.title}
+                            </b>
+                            <small className="mt-1 block break-words text-[11px] text-[#9ba59e]">
+                              {bill.category}
+                            </small>
+                          </div>
+                        </div>
+                        <b className="shrink-0 text-[12px] font-semibold text-[#31483e] dark:text-[#e2ece5]">
+                          {formatCurrency(bill.amount)}
+                        </b>
+                      </div>
+                      <div className="mt-3 flex items-center justify-between gap-2 border-t border-[#f0f2ee] pt-2 dark:border-dark-border">
+                        <span className="text-[10px] text-[#68766f] dark:text-[#c1d0c7]">
+                          Próximo vencimento: {formatDate(bill.dueDate)}
+                        </span>
+                        <div className="flex shrink-0 gap-1">
+                          <button
+                            title="Editar conta recorrente"
+                            aria-label="Editar conta recorrente"
+                            onClick={() => setDialog(bill)}
+                            className={`${iconButtonClasses} !size-[27px] !border-0 !bg-transparent !text-[#9aa59e]`}
+                          >
+                            <Pencil size={15} />
+                          </button>
+                          <button
+                            title="Tirar da recorrência"
+                            aria-label="Tirar da recorrência"
+                            onClick={() => void toggleRecurrence(bill)}
+                            className="grid size-[27px] place-items-center rounded-md bg-[#edf5f0] text-teal dark:bg-[#20372d] dark:text-[#a9e3ce]"
+                          >
+                            <Repeat size={15} />
+                          </button>
+                          <button
+                            title="Excluir conta"
+                            aria-label="Excluir conta"
+                            onClick={() => setBillToDelete(bill)}
+                            className="grid size-[27px] place-items-center rounded-md bg-transparent text-[#9aa59e] hover:bg-[#fff1eb] hover:text-[#dd6245]"
+                          >
+                            <Trash2 size={15} />
+                          </button>
+                        </div>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </>
             )}
           </section>
           <section
