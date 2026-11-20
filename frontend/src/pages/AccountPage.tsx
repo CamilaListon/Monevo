@@ -15,6 +15,12 @@ import ThemeToggle from "../components/ThemeToggle";
 import Sidebar from "../components/Sidebar";
 import { api, apiUrl } from "../utils/api";
 import type { ThemeMode, User } from "../types";
+import {
+  buttonBaseClasses,
+  buttonDarkClasses,
+  buttonQuietClasses,
+  formFieldClasses,
+} from "../utils/tailwind";
 
 export default function AccountPage({
   user,
@@ -186,7 +192,7 @@ export default function AccountPage({
     previewUrl ?? (user.avatarUrl ? apiUrl(user.avatarUrl) : null);
 
   return (
-    <div className="dashboard-shell">
+    <div className="min-h-screen bg-[#f5f6f2] dark:bg-dark-canvas">
       <Sidebar
         page="account"
         mobileMenu={mobileMenu}
@@ -195,61 +201,78 @@ export default function AccountPage({
       />
       {mobileMenu && (
         <button
-          className="mobile-backdrop"
+          className="hidden max-[820px]:fixed max-[820px]:inset-0 max-[820px]:z-[12] max-[820px]:block max-[820px]:bg-[#12251f99]"
           aria-label="Fechar menu"
           onClick={() => setMobileMenu(false)}
         />
       )}
-      <main className="dashboard-main">
-        <header className="dash-topbar">
+      <main className="ml-[232px] min-h-screen max-[1080px]:ml-[205px] max-[820px]:ml-0">
+        <header className="flex h-[68px] items-center justify-between border-b border-[#e9ede6] bg-white px-[37px] dark:border-dark-border dark:bg-dark-raised max-[1080px]:px-6 max-[820px]:h-[61px] max-[820px]:px-[18px] max-[600px]:px-3">
           <button
-            className="mobile-menu-button"
+            className="hidden border-0 bg-transparent text-[#456057] dark:text-[#c0d0c6] max-[820px]:grid max-[820px]:place-items-center"
             onClick={() => setMobileMenu(!mobileMenu)}
             aria-label="Abrir menu"
           >
             <Menu size={21} />
           </button>
-          <div className="breadcrumb">
-            Seu espaço <span>/</span> <b>Perfil</b>
+          <div className="mr-auto text-xs text-[#98a39d] max-[820px]:ml-[11px] max-[600px]:text-[10px]">
+            Seu espaço <span className="px-2 text-[#c3cbc4]">/</span>{" "}
+            <b className="font-semibold text-[#506159] dark:text-[#e2ece5]">
+              Perfil
+            </b>
           </div>
-          <div className="topbar-right">
+          <div className="flex items-center gap-3 max-[600px]:gap-[7px]">
             <ThemeToggle theme={theme} onToggle={onToggleTheme} compact />
-            <Link className="user-profile-link" to="/dashboard">
-              <div className="user-avatar">
+            <Link className="flex items-center gap-[9px]" to="/dashboard">
+              <div className="grid size-[31px] place-items-center overflow-hidden rounded-full bg-[#e2f0e9] font-display text-xs font-semibold text-[#0a675d] dark:bg-[#20372d] dark:text-[#a9e3ce]">
                 {avatarSrc ? (
                   <img src={avatarSrc} crossOrigin="use-credentials" alt="" />
                 ) : (
                   user.name.charAt(0).toUpperCase()
                 )}
               </div>
-              <div className="user-meta">
-                <b>{user.name.split(" ")[0]}</b>
-                <span>Voltar ao painel</span>
+              <div className="max-[600px]:hidden">
+                <b className="block text-xs font-semibold text-[#31443e] dark:text-[#e2ece5]">
+                  {user.name.split(" ")[0]}
+                </b>
+                <span className="mt-[3px] block text-[10px] text-[#96a19b]">
+                  Voltar ao painel
+                </span>
               </div>
             </Link>
           </div>
         </header>
-        <div className="dashboard-content account-content">
-          <div className="welcome-row account-welcome">
+        <div className="mx-auto w-full max-w-[1080px] px-[37px] pb-5 pt-[31px] max-[1080px]:px-6 max-[820px]:max-w-[740px] max-[820px]:px-5 max-[820px]:py-[25px] max-[600px]:px-[13px] max-[600px]:pb-4 max-[600px]:pt-[21px]">
+          <div className="mb-6 flex items-center justify-between">
             <div>
-              <div className="welcome-date">SEU PERFIL</div>
-              <h1>Perfil</h1>
-              <p>Gerencie seus dados pessoais e sua segurança.</p>
+              <div className="text-[12px] font-bold tracking-[1.1px] text-teal">
+                SEU PERFIL
+              </div>
+              <h1 className="mb-0 mt-[5px] font-display text-[25px] font-semibold tracking-[-0.6px] text-[#123d33] dark:text-[#e5eee8] max-[600px]:text-[21px]">
+                Perfil
+              </h1>
+              <p className="m-0 text-[12px] text-[#7b8881] dark:text-[#a5b5ac] max-[600px]:text-[10px]">
+                Gerencie seus dados pessoais e sua segurança.
+              </p>
             </div>
           </div>
-          <div className="account-grid">
-            <section className="panel account-panel">
-              <div className="account-panel-heading">
-                <span className="account-section-icon">
+          <div className="grid grid-cols-[minmax(0,1.1fr)_minmax(310px,0.9fr)] gap-4 max-[820px]:grid-cols-1">
+            <section className="min-w-0 rounded-[11px] border border-[#e9ede6] bg-white p-[23px] dark:border-dark-border dark:bg-dark-surface max-[600px]:p-[17px]">
+              <div className="flex items-center gap-3 border-b border-[#edf0eb] pb-[19px] dark:border-dark-border">
+                <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-[#e7f2ec] text-teal dark:bg-[#20372d] dark:text-[#94dfc7]">
                   <UserRound size={19} />
                 </span>
                 <div>
-                  <h2>Dados pessoais</h2>
-                  <p>Seu perfil e como aparece no Monevo.</p>
+                  <h2 className="m-0 font-display text-[18px] font-semibold text-[#173d33] dark:text-[#e2ece5]">
+                    Dados pessoais
+                  </h2>
+                  <p className="mb-0 mt-1 text-[12px] leading-[1.5] text-[#87938c] dark:text-[#a5b5ac]">
+                    Seu perfil e como aparece no Monevo.
+                  </p>
                 </div>
               </div>
-              <div className="account-avatar-row">
-                <div className="profile-avatar">
+              <div className="flex items-center gap-[17px] border-b border-[#edf0eb] py-[22px] dark:border-dark-border max-[600px]:items-start max-[600px]:gap-3">
+                <div className="grid size-[76px] shrink-0 place-items-center overflow-hidden rounded-full border border-[#dfeae2] bg-[#e4f0e9] text-[28px] text-[#0a6e63] dark:border-[#385448] dark:bg-[#20372d] dark:text-[#a9e3ce] max-[600px]:size-16">
                   {avatarSrc ? (
                     <img
                       src={avatarSrc}
@@ -260,12 +283,16 @@ export default function AccountPage({
                     <span>{user.name.charAt(0).toUpperCase()}</span>
                   )}
                 </div>
-                <div className="profile-avatar-details">
-                  <b>Foto de perfil</b>
-                  <span>JPEG, PNG ou WebP. Até 5 MB.</span>
-                  <div className="avatar-actions">
+                <div className="min-w-0">
+                  <b className="block text-[14px] text-[#334a40] dark:text-[#e2ece5]">
+                    Foto de perfil
+                  </b>
+                  <span className="mt-[5px] block text-[12px] text-[#89968f] dark:text-[#a5b5ac]">
+                    JPEG, PNG ou WebP. Até 5 MB.
+                  </span>
+                  <div className="mt-[11px] flex flex-wrap items-center gap-2 max-[600px]:gap-[6px]">
                     <label
-                      className="button button-quiet avatar-select"
+                      className={`${buttonBaseClasses} ${buttonQuietClasses} min-h-[34px] cursor-pointer px-[10px] text-[12px] max-[600px]:px-2 max-[600px]:text-[10px]`}
                       htmlFor="avatar-file"
                     >
                       <ImagePlus size={16} /> Escolher foto
@@ -279,7 +306,7 @@ export default function AccountPage({
                     />
                     {avatarFile && (
                       <button
-                        className="button button-dark avatar-save"
+                        className={`${buttonBaseClasses} ${buttonDarkClasses} min-h-[34px] px-[10px] text-[12px] max-[600px]:px-2 max-[600px]:text-[10px]`}
                         type="button"
                         onClick={() => void uploadAvatar()}
                         disabled={busy === "avatar"}
@@ -290,7 +317,7 @@ export default function AccountPage({
                     )}
                     {user.avatarUrl && (
                       <button
-                        className="avatar-remove"
+                        className="min-h-8 border-0 bg-transparent px-[6px] text-[12px] font-semibold text-[#c15a40] hover:text-[#e05e3c] hover:underline dark:text-[#ffb49a]"
                         type="button"
                         onClick={() => void removeAvatar()}
                         disabled={busy === "avatar"}
@@ -301,10 +328,14 @@ export default function AccountPage({
                   </div>
                 </div>
               </div>
-              <form className="account-form" onSubmit={saveName}>
-                <label>
+              <form
+                className="flex flex-col gap-[15px] pt-5"
+                onSubmit={saveName}
+              >
+                <label className="flex flex-col gap-[7px] text-[12px] font-semibold text-[#334940] dark:text-[#d7e3da]">
                   Nome completo
                   <input
+                    className={`${formFieldClasses} min-h-[43px] px-3 text-[14px]`}
                     value={name}
                     onChange={(event) => setName(event.target.value)}
                     minLength={2}
@@ -313,18 +344,21 @@ export default function AccountPage({
                     autoComplete="name"
                   />
                 </label>
-                <label>
+                <label className="flex flex-col gap-[7px] text-[12px] font-semibold text-[#334940] dark:text-[#d7e3da]">
                   E-mail
                   <input
+                    className={`${formFieldClasses} min-h-[43px] px-3 text-[14px] disabled:cursor-not-allowed disabled:bg-[#f5f7f3] disabled:text-[#829087] dark:disabled:bg-[#1c2c24] dark:disabled:text-[#9eafa5]`}
                     value={user.email}
                     disabled
                     readOnly
                     autoComplete="email"
                   />
-                  <small>O e-mail não pode ser alterado por aqui.</small>
+                  <small className="text-[12px] font-normal text-[#89968f] dark:text-[#a5b5ac]">
+                    O e-mail não pode ser alterado por aqui.
+                  </small>
                 </label>
                 <button
-                  className="button button-dark account-save"
+                  className={`${buttonBaseClasses} ${buttonDarkClasses} min-h-10 self-start px-[14px] text-[12px] max-[600px]:w-full`}
                   type="submit"
                   disabled={busy === "name" || name.trim() === user.name}
                 >
@@ -333,23 +367,28 @@ export default function AccountPage({
                 </button>
               </form>
             </section>
-            <section className="panel account-panel security-panel">
-              <div className="account-panel-heading">
-                <span className="account-section-icon security-icon">
+            <section className="min-w-0 rounded-[11px] border border-[#e9ede6] bg-white p-[23px] dark:border-dark-border dark:bg-dark-surface max-[600px]:p-[17px]">
+              <div className="flex items-center gap-3 border-b border-[#edf0eb] pb-[19px] dark:border-dark-border">
+                <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-[#fff0e8] text-coral">
                   <KeyRound size={19} />
                 </span>
                 <div>
-                  <h2>Segurança</h2>
-                  <p>Atualize sua senha para manter sua conta protegida.</p>
+                  <h2 className="m-0 font-display text-[18px] font-semibold text-[#173d33] dark:text-[#e2ece5]">
+                    Segurança
+                  </h2>
+                  <p className="mb-0 mt-1 text-[12px] leading-[1.5] text-[#87938c] dark:text-[#a5b5ac]">
+                    Atualize sua senha para manter sua conta protegida.
+                  </p>
                 </div>
               </div>
               <form
-                className="account-form password-form"
+                className="flex flex-col gap-[15px] pt-[22px]"
                 onSubmit={changePassword}
               >
-                <label>
+                <label className="flex flex-col gap-[7px] text-[12px] font-semibold text-[#334940] dark:text-[#d7e3da]">
                   Senha atual
                   <input
+                    className={`${formFieldClasses} min-h-[43px] px-3 text-[14px]`}
                     name="currentPassword"
                     type="password"
                     autoComplete="current-password"
@@ -358,9 +397,10 @@ export default function AccountPage({
                     required
                   />
                 </label>
-                <label>
+                <label className="flex flex-col gap-[7px] text-[12px] font-semibold text-[#334940] dark:text-[#d7e3da]">
                   Nova senha
                   <input
+                    className={`${formFieldClasses} min-h-[43px] px-3 text-[14px]`}
                     name="newPassword"
                     type="password"
                     autoComplete="new-password"
@@ -368,11 +408,14 @@ export default function AccountPage({
                     maxLength={72}
                     required
                   />
-                  <small>Use pelo menos 8 caracteres.</small>
+                  <small className="text-[12px] font-normal text-[#89968f] dark:text-[#a5b5ac]">
+                    Use pelo menos 8 caracteres.
+                  </small>
                 </label>
-                <label>
+                <label className="flex flex-col gap-[7px] text-[12px] font-semibold text-[#334940] dark:text-[#d7e3da]">
                   Confirme a nova senha
                   <input
+                    className={`${formFieldClasses} min-h-[43px] px-3 text-[14px]`}
                     name="confirmation"
                     type="password"
                     autoComplete="new-password"
@@ -382,7 +425,7 @@ export default function AccountPage({
                   />
                 </label>
                 <button
-                  className="button button-dark account-save"
+                  className={`${buttonBaseClasses} ${buttonDarkClasses} min-h-10 self-start px-[14px] text-[12px] max-[600px]:w-full`}
                   type="submit"
                   disabled={busy === "password"}
                 >
@@ -392,9 +435,9 @@ export default function AccountPage({
               </form>
             </section>
           </div>
-          <footer className="dashboard-footer">
+          <footer className="flex justify-between gap-2 px-0 pb-[3px] pt-[18px] text-[12px] text-[#9aa59e] max-[600px]:text-[9px]">
             <span>© 2025 Monevo · Seu dinheiro, no ritmo certo.</span>
-            <span>
+            <span className="inline-flex items-center gap-[5px] text-[9px]">
               <ShieldCheck size={14} /> Seus dados são privados
             </span>
           </footer>

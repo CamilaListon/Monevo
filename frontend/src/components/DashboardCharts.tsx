@@ -14,6 +14,7 @@ import {
 } from "recharts";
 import type { DashboardData } from "../types";
 import { formatCurrency } from "../utils/format";
+import { iconButtonClasses } from "../utils/tailwind";
 
 export default function DashboardCharts({
   data,
@@ -77,24 +78,33 @@ export default function DashboardCharts({
     data?.bills.filter((bill) => bill.status === "overdue").length ?? 0;
 
   return (
-    <section className="insights-grid">
-      <div className="panel spending-panel">
-        <div className="panel-heading">
+    <section className="mt-[14px] grid grid-cols-[1.55fr_1fr] gap-[14px] min-[1450px]:mt-[17px] max-[1080px]:grid-cols-[1.3fr_1fr] max-[1080px]:gap-[10px] max-[820px]:mt-[9px] max-[820px]:grid-cols-1 max-[820px]:gap-[9px]">
+      <div className="min-h-[274px] rounded-[11px] border border-[#e9ede6] bg-white px-[19px] pb-[13px] pt-[17px] dark:border-dark-border dark:bg-dark-surface min-[1450px]:min-h-[295px] min-[1450px]:px-[22px] min-[1450px]:pb-[15px] min-[1450px]:pt-5 max-[600px]:min-h-[260px] max-[600px]:p-[15px]">
+        <div className="flex items-start justify-between">
           <div>
-            <span className="panel-kicker">ACOMPANHAMENTO</span>
-            <h2>Suas despesas</h2>
+            <span className="text-[10px] font-bold tracking-[1.1px] text-[#9aa59e] dark:text-[#9eafa5]">
+              ACOMPANHAMENTO
+            </span>
+            <h2 className="mt-[5px] flex items-center gap-2 font-display text-[16px] font-semibold tracking-[-0.3px] text-[#173d33] dark:text-[#e2ece5]">
+              Suas despesas
+            </h2>
           </div>
-          <span className="period-tag">
-            <span /> {month}
+          <span className="mt-1 inline-flex items-center gap-[5px] rounded-md bg-[#f6f8f5] px-2 py-[6px] text-[10px] capitalize text-[#74817a] dark:bg-[#1c2c24] dark:text-[#b6c7bd]">
+            <span className="size-[5px] rounded-full bg-teal" /> {month}
           </span>
         </div>
-        <div className="chart-total">
+        <div className="mt-3 font-display text-[21px] font-semibold text-[#173d33] dark:text-[#e8f0ea]">
           {formatCurrency(data?.summary.total ?? 0)}
-          <span> no período</span>
+          <span className="font-sans text-[10px] font-normal text-[#9aa49e] dark:text-[#a5b5ac]">
+            {" "}
+            no período
+          </span>
         </div>
-        <div className="spending-chart">
+        <div className="mt-[5px] h-[139px] min-[1450px]:h-[155px] max-[600px]:h-[134px]">
           {loading ? (
-            <div className="chart-loading">Carregando dados...</div>
+            <div className="grid h-full place-items-center text-[12px] text-[#89968f]">
+              Carregando dados...
+            </div>
           ) : (
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart
@@ -152,22 +162,27 @@ export default function DashboardCharts({
             </ResponsiveContainer>
           )}
         </div>
-        <div className="chart-footnote">
-          <span>
-            <span className="legend-dot teal-dot" /> Despesas por categoria
+        <div className="flex items-center justify-between text-[10px] text-[#9ba59f]">
+          <span className="flex items-center gap-[6px] text-[#74817a] dark:text-[#a5b5ac]">
+            <span className="size-[7px] shrink-0 rounded-full bg-teal" />{" "}
+            Despesas por categoria
           </span>
           <span>Valores em reais (R$)</span>
         </div>
       </div>
-      <div className="panel status-panel">
-        <div className="panel-heading">
+      <div className="min-h-[274px] rounded-[11px] border border-[#e9ede6] bg-white px-[19px] pb-[13px] pt-[17px] dark:border-dark-border dark:bg-dark-surface min-[1450px]:min-h-[295px] min-[1450px]:px-[22px] min-[1450px]:pb-[15px] min-[1450px]:pt-5 max-[600px]:min-h-[260px] max-[600px]:p-[15px]">
+        <div className="flex items-start justify-between">
           <div>
-            <span className="panel-kicker">SEU MÊS EM FOCO</span>
-            <h2>Status das contas</h2>
+            <span className="text-[10px] font-bold tracking-[1.1px] text-[#9aa59e] dark:text-[#9eafa5]">
+              SEU MÊS EM FOCO
+            </span>
+            <h2 className="mt-[5px] flex items-center gap-2 font-display text-[16px] font-semibold tracking-[-0.3px] text-[#173d33] dark:text-[#e2ece5]">
+              Status das contas
+            </h2>
           </div>
-          <div className="month-filter-control" ref={monthPickerRef}>
+          <div className="relative" ref={monthPickerRef}>
             <button
-              className="icon-button"
+              className={iconButtonClasses}
               title="Filtrar por mês"
               aria-label="Alterar mês do painel"
               type="button"
@@ -182,13 +197,13 @@ export default function DashboardCharts({
             </button>
             {monthPickerOpen && (
               <div
-                className="month-picker-popover"
+                className="absolute right-0 top-[calc(100%+9px)] z-20 w-[258px] rounded-xl border border-[#e6ebe4] bg-white p-[13px] shadow-[0_14px_36px_#10201d24] dark:border-[#34483d] dark:bg-dark-surface dark:shadow-[0_14px_36px_#00000045] max-[600px]:right-[-16px] max-[600px]:w-[calc(100vw-19px)] max-[600px]:max-w-[367px] max-[600px]:max-h-[calc(100dvh-24px-env(safe-area-inset-top))] max-[600px]:overflow-y-auto max-[600px]:rounded-2xl max-[600px]:p-[17px] max-[600px]:shadow-[0_18px_48px_#10201d35]"
                 role="dialog"
                 aria-label="Selecionar mês do painel"
               >
-                <div className="month-picker-heading">
+                <div className="mb-[10px] flex items-center justify-between text-[14px] text-[#31443e] dark:text-[#e2ece5] max-[600px]:mb-3 max-[600px]:text-[16px]">
                   <button
-                    className="month-picker-year-button"
+                    className="grid size-[34px] place-items-center rounded-lg border-0 bg-transparent text-[#74817b] hover:bg-[#f0f6f2] hover:text-teal dark:text-[#c1d0c7] dark:hover:bg-[#20372d] dark:hover:text-[#8bd5c0] max-[600px]:size-11"
                     type="button"
                     aria-label="Ano anterior"
                     onClick={() => setCalendarYear((year) => year - 1)}
@@ -197,7 +212,7 @@ export default function DashboardCharts({
                   </button>
                   <b>{calendarYear}</b>
                   <button
-                    className="month-picker-year-button"
+                    className="grid size-[34px] place-items-center rounded-lg border-0 bg-transparent text-[#74817b] hover:bg-[#f0f6f2] hover:text-teal dark:text-[#c1d0c7] dark:hover:bg-[#20372d] dark:hover:text-[#8bd5c0] max-[600px]:size-11"
                     type="button"
                     aria-label="Próximo ano"
                     onClick={() => setCalendarYear((year) => year + 1)}
@@ -205,12 +220,12 @@ export default function DashboardCharts({
                     <ChevronRight size={17} />
                   </button>
                 </div>
-                <div className="month-picker-grid">
+                <div className="grid grid-cols-3 gap-[5px] max-[600px]:gap-[7px]">
                   {monthOptions.map(({ value, label }) => (
                     <button
                       key={value}
                       type="button"
-                      className={`month-picker-option ${calendarYear === Number(monthValue.slice(0, 4)) && value === selectedMonth ? "month-picker-option-active" : ""}`}
+                      className={`min-h-9 rounded-[7px] border-0 bg-transparent p-1 text-[12px] capitalize text-[#586760] hover:bg-[#f0f6f2] hover:text-teal dark:text-[#c1d0c7] dark:hover:bg-[#20372d] dark:hover:text-[#8bd5c0] max-[600px]:min-h-[46px] max-[600px]:text-xs ${calendarYear === Number(monthValue.slice(0, 4)) && value === selectedMonth ? "bg-teal font-semibold text-white hover:bg-[#086b67] hover:text-white" : ""}`}
                       aria-pressed={
                         calendarYear === Number(monthValue.slice(0, 4)) &&
                         value === selectedMonth
@@ -230,10 +245,10 @@ export default function DashboardCharts({
             )}
           </div>
         </div>
-        <div className="status-chart-wrap">
-          <div className="status-donut">
+        <div className="mt-[7px] flex min-w-0 items-center gap-[17px] max-[600px]:gap-[10px]">
+          <div className="relative h-[137px] w-[148px] flex-[0_0_148px] max-[1080px]:w-[120px] max-[1080px]:flex-[0_0_120px]">
             {loading ? (
-              <span className="loader small-loader" />
+              <span className="absolute left-1/2 top-1/2 inline-block size-5 -translate-x-1/2 -translate-y-1/2 animate-spin rounded-full border-2 border-[#dbe8df] border-t-teal" />
             ) : (
               <>
                 <ResponsiveContainer width="100%" height="100%">
@@ -272,38 +287,57 @@ export default function DashboardCharts({
                     />
                   </PieChart>
                 </ResponsiveContainer>
-                <div className="donut-label">
-                  <b>{data?.bills.length ?? 0}</b>
-                  <span>contas</span>
+                <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+                  <b className="font-display text-xl font-semibold text-[#173d33] dark:text-[#e2ece5]">
+                    {data?.bills.length ?? 0}
+                  </b>
+                  <span className="mt-px text-[10px] text-[#96a29b] dark:text-[#a5b5ac]">
+                    contas
+                  </span>
                 </div>
               </>
             )}
           </div>
-          <div className="status-legend">
-            <div>
-              <span className="legend-dot teal-dot" />
-              <span>Pagas</span>
-              <b>{paidCount}</b>
+          <div className="flex min-w-0 flex-1 flex-col gap-[13px]">
+            <div className="grid grid-cols-[8px_1fr_auto] items-center gap-[6px]">
+              <span className="size-[7px] shrink-0 rounded-full bg-teal" />
+              <span className="text-[10px] text-[#74817a] dark:text-[#a5b5ac]">
+                Pagas
+              </span>
+              <b className="text-[10px] font-semibold text-[#354c42] dark:text-[#e2ece5]">
+                {paidCount}
+              </b>
             </div>
-            <div>
-              <span className="legend-dot yellow-dot" />
-              <span>Pendentes</span>
-              <b>{pendingCount}</b>
+            <div className="grid grid-cols-[8px_1fr_auto] items-center gap-[6px]">
+              <span className="size-[7px] shrink-0 rounded-full bg-[#f2b84b]" />
+              <span className="text-[10px] text-[#74817a] dark:text-[#a5b5ac]">
+                Pendentes
+              </span>
+              <b className="text-[10px] font-semibold text-[#354c42] dark:text-[#e2ece5]">
+                {pendingCount}
+              </b>
             </div>
-            <div>
-              <span className="legend-dot coral-dot" />
-              <span>Atrasadas</span>
-              <b>{overdueCount}</b>
+            <div className="grid grid-cols-[8px_1fr_auto] items-center gap-[6px]">
+              <span className="size-[7px] shrink-0 rounded-full bg-coral" />
+              <span className="text-[10px] text-[#74817a] dark:text-[#a5b5ac]">
+                Atrasadas
+              </span>
+              <b className="text-[10px] font-semibold text-[#354c42] dark:text-[#e2ece5]">
+                {overdueCount}
+              </b>
             </div>
           </div>
         </div>
-        <div className="monthly-progress">
-          <div>
+        <div className="mt-[2px] border-t border-[#eff1ed] pt-[11px] dark:border-dark-border">
+          <div className="flex justify-between text-[10px] text-[#86928b] dark:text-[#a5b5ac]">
             <span>Contas pagas</span>
-            <b>{paidPercentage}%</b>
+            <b className="font-semibold text-teal">{paidPercentage}%</b>
           </div>
-          <div className="progress-track">
-            <span style={{ width: `${paidPercentage}%` }} />
+          <div className="mt-[7px] h-1 overflow-hidden rounded-[10px] bg-[#edf2ed] dark:bg-[#20372d]">
+            <span
+              className="block h-full rounded-[inherit] bg-teal transition-[width] duration-300"
+              style={{ width: `${paidPercentage}%` }}
+            />
           </div>
         </div>
       </div>

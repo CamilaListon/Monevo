@@ -3,6 +3,17 @@ import { ArrowRight, X } from "lucide-react";
 import { api } from "../utils/api";
 import type { Bill, BillInput } from "../types";
 import AlertDialog from "./AlertDialog";
+import {
+  buttonBaseClasses,
+  buttonDarkClasses,
+  buttonQuietClasses,
+  dialogPanelClasses,
+  formFieldClasses,
+  formLabelClasses,
+  iconButtonClasses,
+  modalBackdropClasses,
+  textAreaClasses,
+} from "../utils/tailwind";
 
 export default function BillDialog({
   value,
@@ -67,63 +78,73 @@ export default function BillDialog({
 
   return (
     <div
-      className="modal-backdrop"
+      className={modalBackdropClasses}
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
     >
       <section
-        className="bill-dialog"
+        className={dialogPanelClasses}
         role="dialog"
         aria-modal="true"
         aria-labelledby="dialog-title"
       >
-        <div className="dialog-heading">
+        <div className="mb-5 flex items-start justify-between">
           <div>
-            <span className="panel-kicker">
+            <span className="text-[10px] font-bold tracking-[1.1px] text-[#9aa59e] dark:text-[#9eafa5]">
               {value ? "ATUALIZE OS DETALHES" : "NOVA DESPESA"}
             </span>
-            <h2 id="dialog-title">
+            <h2
+              id="dialog-title"
+              className="my-[5px] font-display text-[21px] font-semibold text-[#173d33] dark:text-[#e2ece5]"
+            >
               {value ? "Editar conta" : "Adicionar conta"}
             </h2>
-            <p>
+            <p className="m-0 text-[10px] text-[#87938c] dark:text-[#a5b5ac]">
               {value
                 ? "Mantenha as informações sempre em dia."
                 : "Organize um novo compromisso financeiro."}
             </p>
           </div>
-          <button className="icon-button" onClick={onClose} aria-label="Fechar">
+          <button
+            className={iconButtonClasses}
+            onClick={onClose}
+            aria-label="Fechar"
+          >
             <X size={19} />
           </button>
         </div>
-        <form className="bill-form" onSubmit={submit}>
-          <label>
+        <form className="flex flex-col gap-[13px]" onSubmit={submit}>
+          <label className={formLabelClasses}>
             Nome da conta
             <input
               name="title"
+              className={formFieldClasses}
               defaultValue={value?.title}
               placeholder="Ex.: Conta de energia"
               required
               maxLength={100}
             />
           </label>
-          <div className="form-row">
-            <label>
+          <div className="grid grid-cols-2 gap-[11px]">
+            <label className={formLabelClasses}>
               Categoria
               <select
                 value={isCustom ? "Outros" : category}
                 onChange={(event) => setCategory(event.target.value)}
+                className={formFieldClasses}
               >
                 {categories.map((item) => (
                   <option key={item}>{item}</option>
                 ))}
               </select>
             </label>
-            <label>
+            <label className={formLabelClasses}>
               Valor
               <input
                 name="amount"
                 type="number"
+                className={formFieldClasses}
                 defaultValue={value?.amount}
                 placeholder="0,00"
                 min="0.01"
@@ -133,67 +154,73 @@ export default function BillDialog({
             </label>
           </div>
           {(isCustom || category === "Outros") && (
-            <label>
+            <label className={formLabelClasses}>
               Nome da categoria
               <input
                 value={customCategory}
                 onChange={(event) => setCustomCategory(event.target.value)}
+                className={formFieldClasses}
                 placeholder="Ex.: Pets"
                 maxLength={40}
               />
             </label>
           )}
-          <label>
+          <label className={formLabelClasses}>
             Data de vencimento
             <input
               name="dueDate"
               type="date"
+              className={formFieldClasses}
               defaultValue={value?.dueDate.slice(0, 10)}
               required
             />
           </label>
           {!value && (
-            <div className="recurring-option">
+            <div className="flex flex-row items-start gap-2.5 rounded-[9px] border border-[#e6ebe4] bg-[#f7faf7] px-3 py-[11px] dark:border-[#34483d] dark:bg-[#111c16]">
               <input
                 id="recurring-bill"
-                className="recurring-option-checkbox"
+                className="mt-0 grid size-4 flex-none cursor-pointer place-content-center appearance-none rounded border border-[#9aa8a0] bg-white text-white checked:border-teal checked:bg-teal before:h-[7px] before:w-1 before:scale-0 before:rotate-45 before:border-b-2 before:border-r-2 before:border-current before:content-[''] checked:before:scale-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#69c5b0] dark:border-[#a5b5ac] dark:bg-dark-surface dark:text-dark-surface dark:checked:border-white dark:checked:bg-white"
                 name="recurring"
                 type="checkbox"
                 checked={recurring}
                 onChange={(event) => setRecurring(event.target.checked)}
               />
               <label
-                className="recurring-option-label"
+                className="flex cursor-pointer flex-col gap-[3px] text-[12px] font-semibold text-[#334940] dark:text-[#e2ece5]"
                 htmlFor="recurring-bill"
               >
-                <b>Repetir mensalmente</b>
-                <small>
+                <b className="text-[12px] leading-4">Repetir mensalmente</b>
+                <small className="text-[10px] font-normal text-[#87938c] dark:text-[#a5b5ac]">
                   A conta será criada automaticamente nos meses seguintes.
                 </small>
               </label>
             </div>
           )}
-          <label>
-            Observação <span className="optional-label">opcional</span>
+          <label className={formLabelClasses}>
+            Observação{" "}
+            <span className="text-[10px] font-normal text-[#a2aca6] dark:text-[#9eafa5]">
+              opcional
+            </span>
             <textarea
               name="notes"
+              className={textAreaClasses}
               defaultValue={value?.notes ?? ""}
               placeholder="Adicione um lembrete ou detalhe"
               rows={3}
               maxLength={500}
             />
           </label>
-          <div className="dialog-actions">
+          <div className="mt-1 flex justify-end gap-2 border-t border-[#eff1ed] pt-[15px] dark:border-dark-border">
             <button
               type="button"
-              className="button button-quiet"
+              className={`${buttonBaseClasses} min-h-[39px] rounded-lg px-[13px] text-[10px] ${buttonQuietClasses}`}
               onClick={onClose}
             >
               Cancelar
             </button>
             <button
               type="submit"
-              className="button button-dark"
+              className={`${buttonBaseClasses} min-h-[39px] rounded-lg px-[13px] text-[10px] ${buttonDarkClasses}`}
               disabled={busy}
             >
               {busy

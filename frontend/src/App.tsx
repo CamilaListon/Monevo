@@ -12,8 +12,8 @@ function AppRoutes() {
 
   if (checkingSession) {
     return (
-      <div className="screen-loader">
-        <span className="loader" />
+      <div className="grid min-h-screen place-items-center bg-[#f5f6f2] dark:bg-dark-canvas">
+        <span className="inline-block size-6 animate-spin rounded-full border-2 border-[#dbe8df] border-t-teal" />
       </div>
     );
   }

@@ -37,6 +37,11 @@ import type {
   ThemeMode,
   User,
 } from "../types";
+import {
+  buttonBaseClasses,
+  buttonDarkClasses,
+  iconButtonClasses,
+} from "../utils/tailwind";
 
 const DashboardCharts = lazy(() => import("../components/DashboardCharts"));
 
@@ -200,7 +205,7 @@ export default function DashboardPage({
     : 0;
 
   return (
-    <div className="dashboard-shell">
+    <div className="min-h-screen overflow-x-clip bg-[#f5f6f2] dark:bg-dark-canvas">
       <Sidebar
         page="dashboard"
         activeSection={activeNav}
@@ -220,32 +225,35 @@ export default function DashboardPage({
       />
       {mobileMenu && (
         <button
-          className="mobile-backdrop"
+          className="hidden max-[820px]:fixed max-[820px]:inset-0 max-[820px]:z-[12] max-[820px]:block max-[820px]:bg-[#12251f99]"
           aria-label="Fechar menu"
           onClick={() => setMobileMenu(false)}
         />
       )}
-      <main className="dashboard-main">
-        <header className="dash-topbar">
+      <main className="ml-[232px] min-h-screen max-[1080px]:ml-[205px] max-[820px]:ml-0">
+        <header className="flex h-[68px] items-center justify-between border-b border-[#e9ede6] bg-white px-[37px] dark:border-dark-border dark:bg-dark-raised max-[1080px]:px-6 max-[820px]:h-[61px] max-[820px]:px-[18px] max-[600px]:px-3">
           <button
-            className="mobile-menu-button"
+            className="hidden border-0 bg-transparent text-[#456057] dark:text-[#c0d0c6] max-[820px]:grid max-[820px]:place-items-center"
             onClick={() => setMobileMenu(!mobileMenu)}
             aria-label="Abrir menu"
           >
             <Menu size={21} />
           </button>
-          <div className="breadcrumb">
-            Seu espaço <span>/</span> <b>Visão geral</b>
+          <div className="mr-auto text-xs text-[#98a39d] max-[820px]:ml-[11px] max-[600px]:text-[10px]">
+            Seu espaço <span className="px-2 text-[#c3cbc4]">/</span>{" "}
+            <b className="font-semibold text-[#506159] dark:text-[#e2ece5]">
+              Visão geral
+            </b>
           </div>
-          <div className="topbar-right">
+          <div className="flex items-center gap-3 max-[600px]:gap-[7px]">
             <ThemeToggle theme={theme} onToggle={onToggleTheme} compact />
-            <div className="topbar-divider" />
+            <div className="mx-[3px] h-7 w-px bg-[#e9ede6] dark:bg-dark-border" />
             <Link
-              className="user-profile-link"
+              className="flex items-center gap-[9px]"
               to="/account"
               aria-label="Abrir minha conta"
             >
-              <div className="user-avatar">
+              <div className="grid size-[31px] place-items-center overflow-hidden rounded-full bg-[#e2f0e9] font-display text-xs font-semibold text-[#0a675d] dark:bg-[#20372d] dark:text-[#a9e3ce]">
                 {user.avatarUrl ? (
                   <img
                     src={apiUrl(user.avatarUrl)}
@@ -256,37 +264,46 @@ export default function DashboardPage({
                   user.name.charAt(0).toUpperCase()
                 )}
               </div>
-              <div className="user-meta">
-                <b>{user.name.split(" ")[0]}</b>
-                <span>Minha conta</span>
+              <div className="max-[600px]:hidden">
+                <b className="block text-xs font-semibold text-[#31443e] dark:text-[#e2ece5]">
+                  {user.name.split(" ")[0]}
+                </b>
+                <span className="mt-[3px] block text-[10px] text-[#96a19b]">
+                  Minha conta
+                </span>
               </div>
             </Link>
           </div>
         </header>
-        <div className="dashboard-content">
-          <div className="welcome-row">
+        <div className="mx-auto w-full max-w-[1250px] px-[37px] pb-5 pt-[31px] max-[1080px]:px-6 max-[820px]:max-w-[740px] max-[820px]:px-5 max-[820px]:py-[25px] max-[600px]:px-[13px] max-[600px]:pb-4 max-[600px]:pt-[21px]">
+          <div className="mb-[21px] flex items-center justify-between max-[600px]:items-start">
             <div>
-              <div className="welcome-date">
+              <div className="text-[10px] capitalize text-[#89968f] dark:text-[#a5b5ac]">
                 {new Intl.DateTimeFormat("pt-BR", {
                   weekday: "long",
                   day: "numeric",
                   month: "long",
                 }).format(new Date())}
               </div>
-              <h1>
+              <h1 className="mb-[2px] mt-[5px] font-display text-[25px] font-semibold tracking-[-0.6px] text-[#123d33] dark:text-[#e5eee8] max-[600px]:text-[21px]">
                 Bom dia, {user.name.split(" ")[0]}{" "}
-                <span className="wave">✳</span>
+                <span className="align-[2px] text-[18px] text-coral">✳</span>
               </h1>
-              <p>Aqui está o resumo das suas contas.</p>
+              <p className="m-0 text-[12px] text-[#7b8881] dark:text-[#a5b5ac] max-[600px]:text-[10px]">
+                Aqui está o resumo das suas contas.
+              </p>
             </div>
             <button
-              className="button button-dark add-button"
+              className={`${buttonBaseClasses} ${buttonDarkClasses} min-h-[39px] rounded-lg px-[14px] text-[12px] max-[600px]:min-h-[35px] max-[600px]:gap-1 max-[600px]:px-2 max-[600px]:text-[10px]`}
               onClick={() => setDialog("new")}
             >
               <Plus size={18} /> Novo lançamento
             </button>
           </div>
-          <section className="summary-grid" aria-label="Resumo mensal">
+          <section
+            className="grid grid-cols-4 gap-[13px] max-[1080px]:gap-[9px] max-[820px]:grid-cols-2 max-[600px]:gap-2"
+            aria-label="Resumo mensal"
+          >
             <SummaryCard
               title="Total de contas"
               value={data?.summary.total ?? 0}
@@ -318,11 +335,11 @@ export default function DashboardPage({
           </section>
           <Suspense
             fallback={
-              <div className="insights-grid">
-                <div className="panel chart-loading">
+              <div className="mt-[14px] grid grid-cols-[1.55fr_1fr] gap-[14px] max-[1080px]:grid-cols-[1.3fr_1fr] max-[1080px]:gap-[10px] max-[820px]:mt-[9px] max-[820px]:grid-cols-1 max-[820px]:gap-[9px]">
+                <div className="grid h-full place-items-center rounded-[11px] border border-[#e9ede6] bg-white text-[12px] text-[#89968f] dark:border-dark-border dark:bg-dark-surface">
                   Carregando gráficos...
                 </div>
-                <div className="panel chart-loading">
+                <div className="grid h-full place-items-center rounded-[11px] border border-[#e9ede6] bg-white text-[12px] text-[#89968f] dark:border-dark-border dark:bg-dark-surface">
                   Carregando gráficos...
                 </div>
               </div>
@@ -336,26 +353,34 @@ export default function DashboardPage({
               onMonthChange={setMonth}
             />
           </Suspense>
-          <section className="panel bills-panel" id="bills-section">
-            <div className="panel-heading bills-heading">
+          <section
+            className="mt-[14px] scroll-mt-[15px] rounded-[11px] border border-[#e9ede6] bg-white px-[19px] pb-0 pt-[17px] dark:border-dark-border dark:bg-dark-surface max-[600px]:px-[11px] max-[600px]:pt-[13px]"
+            id="bills-section"
+          >
+            <div className="flex items-center justify-between max-[820px]:flex-wrap max-[820px]:gap-[10px]">
               <div>
-                <span className="panel-kicker">ACOMPANHE DE PERTO</span>
-                <h2>
+                <span className="text-[10px] font-bold tracking-[1.1px] text-[#9aa59e] dark:text-[#9eafa5]">
+                  ACOMPANHE DE PERTO
+                </span>
+                <h2 className="mt-[5px] flex items-center gap-2 font-display text-[16px] font-semibold tracking-[-0.3px] text-[#173d33] dark:text-[#e2ece5]">
                   Suas contas{" "}
-                  <span className="count-badge">{data?.bills.length ?? 0}</span>
+                  <span className="inline-grid h-[19px] min-w-[19px] place-items-center rounded-md bg-[#e8f3ee] px-[5px] font-sans text-[10px] font-semibold text-teal">
+                    {data?.bills.length ?? 0}
+                  </span>
                 </h2>
               </div>
-              <div className="table-actions">
-                <label className="search-field">
+              <div className="flex items-center gap-2 max-[600px]:w-full">
+                <label className="flex min-h-[34px] flex-1 items-center gap-[7px] rounded-[7px] border border-[#e8ede7] px-[9px] text-[#9aa49e] dark:border-dark-border">
                   <Search size={16} />
                   <input
+                    className="w-[116px] border-0 bg-transparent p-0 text-[10px] text-[#43564c] outline-none placeholder:text-[#a3ada7] dark:text-[#e2ece5] dark:placeholder:text-[#83958a] max-[600px]:w-full"
                     placeholder="Buscar conta..."
                     value={search}
                     onChange={(event) => setSearch(event.target.value)}
                   />
                 </label>
                 <select
-                  className="filter-select"
+                  className="h-[34px] max-w-[46%] rounded-[7px] border border-[#e8ede7] bg-white px-[9px] pr-[25px] text-[10px] text-[#68766f] dark:border-dark-border dark:bg-[#1c2c24] dark:text-[#dce8df]"
                   value={category}
                   onChange={(event) => setCategory(event.target.value)}
                   aria-label="Filtrar por categoria"
@@ -367,8 +392,10 @@ export default function DashboardPage({
                 </select>
               </div>
             </div>
-            <div className="quick-filters">
-              <span>Mostrar:</span>
+            <div className="my-[13px] mb-[2px] flex items-center gap-[6px] overflow-x-auto pb-[3px]">
+              <span className="mr-[3px] shrink-0 text-[10px] text-[#9aa49d] dark:text-[#a5b5ac]">
+                Mostrar:
+              </span>
               {(
                 [
                   ["all", "Todas"],
@@ -380,13 +407,13 @@ export default function DashboardPage({
                 <button
                   key={value}
                   onClick={() => setStatus(value)}
-                  className={`filter-chip ${status === value ? "filter-chip-active" : ""}`}
+                  className={`inline-flex min-h-[25px] shrink-0 items-center gap-[5px] rounded-md border px-[9px] text-[12px] ${status === value ? "border-[#dfebe4] bg-[#edf5f0] font-semibold text-[#0a6e63] dark:border-[#34574b] dark:bg-[#20372d] dark:text-[#a9e3ce]" : "border-transparent bg-transparent text-[#859189] hover:bg-[#f5f7f3] dark:text-[#a8b7ae] dark:hover:bg-[#1c2c24]"}`}
                 >
                   {label}
                   {value === "overdue" &&
                     (data?.bills.filter((bill) => bill.status === "overdue")
                       .length ?? 0) > 0 && (
-                      <span className="filter-count">
+                      <span className="grid size-[14px] place-items-center rounded-full bg-[#ffe8de] text-[10px] text-[#bf5639]">
                         {
                           data?.bills.filter(
                             (bill) => bill.status === "overdue",
@@ -398,28 +425,30 @@ export default function DashboardPage({
               ))}
             </div>
             {loading ? (
-              <div className="empty-state">
-                <span className="loader" />
-                <p>Carregando suas contas...</p>
+              <div className="flex min-h-[190px] flex-col items-center justify-center text-[#84918a] dark:text-[#a5b5ac]">
+                <span className="inline-block size-5 animate-spin rounded-full border-2 border-[#dbe8df] border-t-teal" />
+                <p className="my-[9px] mb-3 text-[10px]">
+                  Carregando suas contas...
+                </p>
               </div>
             ) : bills.length === 0 ? (
-              <div className="empty-state">
-                <span className="empty-icon">
+              <div className="flex min-h-[190px] flex-col items-center justify-center text-[#84918a] dark:text-[#a5b5ac]">
+                <span className="grid size-10 place-items-center rounded-xl bg-[#e8f3ee] text-teal">
                   <FileText size={22} />
                 </span>
-                <b>
+                <b className="mt-[11px] text-[12px] text-[#40564c] dark:text-[#e2ece5]">
                   {data?.bills.length
                     ? "Nenhuma conta com esses filtros"
                     : "Tudo começa com uma conta"}
                 </b>
-                <p>
+                <p className="my-[9px] mb-3 text-center text-[10px]">
                   {data?.bills.length
                     ? "Tente mudar os filtros ou o período."
                     : "Cadastre sua primeira conta e acompanhe tudo por aqui."}
                 </p>
                 {!data?.bills.length && (
                   <button
-                    className="button button-dark button-small"
+                    className={`${buttonBaseClasses} ${buttonDarkClasses} min-h-[42px] px-4 text-xs`}
                     onClick={() => setDialog("new")}
                   >
                     <Plus size={16} /> Adicionar conta
@@ -427,17 +456,29 @@ export default function DashboardPage({
                 )}
               </div>
             ) : (
-              <div className="table-wrap">
-                <table>
+              <div className="w-full min-w-0 max-w-full overscroll-x-contain overflow-x-auto">
+                <table className="w-full min-w-[610px] border-collapse text-left [white-space:nowrap] max-[600px]:min-w-[590px]">
                   <thead>
                     <tr>
-                      <th>CONTA</th>
-                      <th>CATEGORIA</th>
-                      <th>VENCIMENTO</th>
-                      <th>VALOR</th>
-                      <th>SITUAÇÃO</th>
-                      <th>RECORRENTE</th>
-                      <th>
+                      <th className="h-[34px] border-b border-[#edf0eb] text-[10px] font-semibold tracking-[0.65px] text-[#a1aaa4] dark:border-dark-border">
+                        CONTA
+                      </th>
+                      <th className="h-[34px] border-b border-[#edf0eb] text-[10px] font-semibold tracking-[0.65px] text-[#a1aaa4] dark:border-dark-border">
+                        CATEGORIA
+                      </th>
+                      <th className="h-[34px] border-b border-[#edf0eb] text-[10px] font-semibold tracking-[0.65px] text-[#a1aaa4] dark:border-dark-border">
+                        VENCIMENTO
+                      </th>
+                      <th className="h-[34px] border-b border-[#edf0eb] text-[10px] font-semibold tracking-[0.65px] text-[#a1aaa4] dark:border-dark-border">
+                        VALOR
+                      </th>
+                      <th className="h-[34px] border-b border-[#edf0eb] text-[10px] font-semibold tracking-[0.65px] text-[#a1aaa4] dark:border-dark-border">
+                        SITUAÇÃO
+                      </th>
+                      <th className="h-[34px] border-b border-[#edf0eb] text-[10px] font-semibold tracking-[0.65px] text-[#a1aaa4] dark:border-dark-border">
+                        RECORRENTE
+                      </th>
+                      <th className="h-[34px] border-b border-[#edf0eb] text-[10px] font-semibold tracking-[0.65px] text-[#a1aaa4] dark:border-dark-border">
                         <span className="sr-only">Ações</span>
                       </th>
                     </tr>
@@ -445,25 +486,29 @@ export default function DashboardPage({
                   <tbody>
                     {bills.map((bill) => (
                       <tr key={bill.id}>
-                        <td>
-                          <div className="bill-title-cell">
+                        <td className="h-[57px] border-b border-[#f0f2ee] text-[12px] text-[#68766f] dark:border-dark-border">
+                          <div className="flex items-center gap-[9px]">
                             <span
-                              className={`bill-category-icon ${bill.status}`}
+                              className={`grid size-[31px] place-items-center rounded-lg ${bill.status === "paid" ? "bg-[#e7f3ee] text-teal" : bill.status === "overdue" ? "bg-[#fff0e9] text-[#e46e4c]" : "bg-[#fff5dd] text-[#bc8e3b]"}`}
                             >
                               <FileText size={16} />
                             </span>
                             <div>
-                              <b>{bill.title}</b>
-                              <small>{bill.notes || bill.category}</small>
+                              <b className="block max-w-[175px] overflow-hidden text-ellipsis text-[12px] font-semibold text-[#294239] dark:text-[#e2ece5]">
+                                {bill.title}
+                              </b>
+                              <small className="mt-1 block max-w-[175px] overflow-hidden text-ellipsis text-[12px] text-[#9ba59e]">
+                                {bill.notes || bill.category}
+                              </small>
                             </div>
                           </div>
                         </td>
-                        <td>
-                          <span className="category-label">
+                        <td className="h-[57px] border-b border-[#f0f2ee] text-[12px] text-[#68766f] dark:border-dark-border">
+                          <span className="rounded-[5px] bg-[#f4f6f2] px-2 py-[5px] text-[12px] text-[#728078] dark:bg-[#1c2c24] dark:text-[#a5b5ac]">
                             {bill.category}
                           </span>
                         </td>
-                        <td>
+                        <td className="h-[57px] border-b border-[#f0f2ee] text-[12px] text-[#68766f] dark:border-dark-border">
                           <span
                             className={
                               bill.status === "overdue" ? "due-overdue" : ""
@@ -472,19 +517,19 @@ export default function DashboardPage({
                             {formatDate(bill.dueDate)}
                           </span>
                         </td>
-                        <td className="amount-cell">
+                        <td className="h-[57px] border-b border-[#f0f2ee] text-[10px] font-semibold text-[#31483e] dark:border-dark-border dark:text-[#e2ece5]">
                           {formatCurrency(bill.amount)}
                         </td>
-                        <td>
+                        <td className="h-[57px] border-b border-[#f0f2ee] text-[12px] text-[#68766f] dark:border-dark-border">
                           <StatusBadge status={bill.status} />
                         </td>
-                        <td>
+                        <td className="h-[57px] border-b border-[#f0f2ee] text-[12px] text-[#68766f] dark:border-dark-border">
                           {bill.recurring || bill.recurrenceSourceId
                             ? "Sim"
                             : "Não"}
                         </td>
-                        <td>
-                          <div className="row-actions">
+                        <td className="h-[57px] border-b border-[#f0f2ee] text-[12px] text-[#68766f] dark:border-dark-border">
+                          <div className="flex justify-end gap-1">
                             <button
                               title={
                                 bill.status === "paid"
@@ -497,14 +542,14 @@ export default function DashboardPage({
                                   : "Marcar como paga"
                               }
                               onClick={() => void togglePayment(bill)}
-                              className={`row-action ${bill.status === "paid" ? "row-action-active" : ""}`}
+                              className={`grid size-[27px] place-items-center rounded-md ${bill.status === "paid" ? "bg-[#edf5f0] text-teal dark:bg-[#20372d] dark:text-[#a9e3ce]" : "bg-transparent text-[#9aa59e] hover:bg-[#edf5f0] hover:text-teal"}`}
                             >
                               <Check size={15} />
                             </button>
                             <button
                               title="Editar conta"
                               onClick={() => setDialog(bill)}
-                              className="row-action"
+                              className={`${iconButtonClasses} !size-[27px] !border-0 !bg-transparent !text-[#9aa59e]`}
                             >
                               <Pencil size={15} />
                             </button>
@@ -520,14 +565,14 @@ export default function DashboardPage({
                                   : "Tornar recorrente"
                               }
                               onClick={() => void toggleRecurrence(bill)}
-                              className={`row-action ${bill.recurring || bill.recurrenceSourceId ? "row-action-active" : ""}`}
+                              className={`grid size-[27px] place-items-center rounded-md ${bill.recurring || bill.recurrenceSourceId ? "bg-[#edf5f0] text-teal dark:bg-[#20372d] dark:text-[#a9e3ce]" : "bg-transparent text-[#9aa59e] hover:bg-[#edf5f0] hover:text-teal"}`}
                             >
                               <Repeat size={15} />
                             </button>
                             <button
                               title="Excluir conta"
                               onClick={() => setBillToDelete(bill)}
-                              className="row-action action-delete"
+                              className="grid size-[27px] place-items-center rounded-md bg-transparent text-[#9aa59e] hover:bg-[#fff1eb] hover:text-[#dd6245]"
                             >
                               <Trash2 size={15} />
                             </button>
@@ -541,30 +586,33 @@ export default function DashboardPage({
             )}
           </section>
           <section
-            className="panel recurring-bills-panel"
+            className="mt-[14px] scroll-mt-[15px] rounded-[11px] border border-[#e9ede6] bg-white px-[19px] pb-0 pt-[17px] dark:border-dark-border dark:bg-dark-surface max-[600px]:px-[11px] max-[600px]:pt-[13px]"
             id="recurring-section"
           >
-            <div className="panel-heading bills-heading">
+            <div className="flex items-center justify-between max-[820px]:flex-wrap max-[820px]:gap-[10px]">
               <div>
-                <span className="panel-kicker">GESTÃO DE RECORRÊNCIAS</span>
-                <h2>
+                <span className="text-[10px] font-bold tracking-[1.1px] text-[#9aa59e] dark:text-[#9eafa5]">
+                  GESTÃO DE RECORRÊNCIAS
+                </span>
+                <h2 className="mt-[5px] flex items-center gap-2 font-display text-[16px] font-semibold tracking-[-0.3px] text-[#173d33] dark:text-[#e2ece5]">
                   Contas recorrentes{" "}
-                  <span className="count-badge">
+                  <span className="inline-grid h-[19px] min-w-[19px] place-items-center rounded-md bg-[#e8f3ee] px-[5px] font-sans text-[10px] font-semibold text-teal">
                     {filteredRecurringBills.length}
                   </span>
                 </h2>
               </div>
-              <div className="table-actions">
-                <label className="search-field">
+              <div className="flex items-center gap-2 max-[600px]:w-full">
+                <label className="flex min-h-[34px] flex-1 items-center gap-[7px] rounded-[7px] border border-[#e8ede7] px-[9px] text-[#9aa49e] dark:border-dark-border">
                   <Search size={16} />
                   <input
+                    className="w-[116px] border-0 bg-transparent p-0 text-[10px] text-[#43564c] outline-none placeholder:text-[#a3ada7] dark:text-[#e2ece5] dark:placeholder:text-[#83958a] max-[600px]:w-full"
                     placeholder="Buscar conta recorrente..."
                     value={recurringSearch}
                     onChange={(event) => setRecurringSearch(event.target.value)}
                   />
                 </label>
                 <select
-                  className="filter-select"
+                  className="h-[34px] max-w-[46%] rounded-[7px] border border-[#e8ede7] bg-white px-[9px] pr-[25px] text-[10px] text-[#68766f] dark:border-dark-border dark:bg-[#1c2c24] dark:text-[#dce8df]"
                   value={recurringCategory}
                   onChange={(event) => setRecurringCategory(event.target.value)}
                   aria-label="Filtrar recorrências por categoria"
@@ -577,36 +625,46 @@ export default function DashboardPage({
               </div>
             </div>
             {recurringLoading ? (
-              <div className="empty-state">
-                <span className="loader" />
-                <p>Carregando contas recorrentes...</p>
+              <div className="flex min-h-[190px] flex-col items-center justify-center text-[#84918a] dark:text-[#a5b5ac]">
+                <span className="inline-block size-5 animate-spin rounded-full border-2 border-[#dbe8df] border-t-teal" />
+                <p className="my-[9px] mb-3 text-[10px]">
+                  Carregando contas recorrentes...
+                </p>
               </div>
             ) : filteredRecurringBills.length === 0 ? (
-              <div className="empty-state">
-                <span className="empty-icon">
+              <div className="flex min-h-[190px] flex-col items-center justify-center text-[#84918a] dark:text-[#a5b5ac]">
+                <span className="grid size-10 place-items-center rounded-xl bg-[#e8f3ee] text-teal">
                   <Repeat size={22} />
                 </span>
-                <b>
+                <b className="mt-[11px] text-[12px] text-[#40564c] dark:text-[#e2ece5]">
                   {recurringBills.length
                     ? "Nenhuma recorrência corresponde aos filtros"
                     : "Nenhuma conta recorrente cadastrada"}
                 </b>
-                <p>
+                <p className="my-[9px] mb-3 text-center text-[10px]">
                   {recurringBills.length
                     ? "Tente buscar por outro nome ou categoria."
                     : "Ative a recorrência ao adicionar uma conta."}
                 </p>
               </div>
             ) : (
-              <div className="table-wrap">
-                <table>
+              <div className="w-full min-w-0 max-w-full overscroll-x-contain overflow-x-auto">
+                <table className="w-full min-w-0 border-collapse text-left [white-space:nowrap] max-[600px]:table-fixed max-[600px]:[white-space:normal]">
                   <thead>
                     <tr>
-                      <th>CONTA</th>
-                      <th>CATEGORIA</th>
-                      <th>VENCIMENTO INICIAL</th>
-                      <th>VALOR</th>
-                      <th>
+                      <th className="h-[34px] border-b border-[#edf0eb] text-[10px] font-semibold tracking-[0.65px] text-[#a1aaa4] dark:border-dark-border">
+                        CONTA
+                      </th>
+                      <th className="h-[34px] border-b border-[#edf0eb] text-[10px] font-semibold tracking-[0.65px] text-[#a1aaa4] dark:border-dark-border max-[600px]:hidden">
+                        CATEGORIA
+                      </th>
+                      <th className="h-[34px] border-b border-[#edf0eb] text-[10px] font-semibold tracking-[0.65px] text-[#a1aaa4] dark:border-dark-border">
+                        VENCIMENTO INICIAL
+                      </th>
+                      <th className="h-[34px] border-b border-[#edf0eb] text-[10px] font-semibold tracking-[0.65px] text-[#a1aaa4] dark:border-dark-border">
+                        VALOR
+                      </th>
+                      <th className="h-[34px] border-b border-[#edf0eb] text-[10px] font-semibold tracking-[0.65px] text-[#a1aaa4] dark:border-dark-border">
                         <span className="sr-only">Ações</span>
                       </th>
                     </tr>
@@ -614,35 +672,41 @@ export default function DashboardPage({
                   <tbody>
                     {filteredRecurringBills.map((bill) => (
                       <tr key={bill.id}>
-                        <td>
-                          <div className="bill-title-cell">
+                        <td className="h-[57px] border-b border-[#f0f2ee] text-[12px] text-[#68766f] dark:border-dark-border">
+                          <div className="flex items-center gap-[9px]">
                             <span
-                              className={`bill-category-icon ${bill.status}`}
+                              className={`grid size-[31px] shrink-0 place-items-center rounded-lg max-[600px]:size-6 ${bill.status === "paid" ? "bg-[#e7f3ee] text-teal" : bill.status === "overdue" ? "bg-[#fff0e9] text-[#e46e4c]" : "bg-[#fff5dd] text-[#bc8e3b]"}`}
                             >
                               <Repeat size={16} />
                             </span>
-                            <div>
-                              <b>{bill.title}</b>
-                              <small>{bill.notes || bill.category}</small>
+                            <div className="min-w-0">
+                              <b className="block max-w-[175px] overflow-hidden text-ellipsis text-[12px] font-semibold text-[#294239] dark:text-[#e2ece5] max-[600px]:truncate">
+                                {bill.title}
+                              </b>
+                              <small className="mt-1 block max-w-[175px] overflow-hidden text-ellipsis text-[12px] text-[#9ba59e] max-[600px]:truncate">
+                                {bill.notes || bill.category}
+                              </small>
                             </div>
                           </div>
                         </td>
-                        <td>
-                          <span className="category-label">
+                        <td className="h-[57px] border-b border-[#f0f2ee] text-[12px] text-[#68766f] dark:border-dark-border max-[600px]:hidden">
+                          <span className="rounded-[5px] bg-[#f4f6f2] px-2 py-[5px] text-[12px] text-[#728078] dark:bg-[#1c2c24] dark:text-[#a5b5ac]">
                             {bill.category}
                           </span>
                         </td>
-                        <td>{formatDate(bill.dueDate)}</td>
-                        <td className="amount-cell">
+                        <td className="h-[57px] border-b border-[#f0f2ee] text-[12px] text-[#68766f] dark:border-dark-border">
+                          {formatDate(bill.dueDate)}
+                        </td>
+                        <td className="h-[57px] border-b border-[#f0f2ee] text-[10px] font-semibold text-[#31483e] dark:border-dark-border dark:text-[#e2ece5]">
                           {formatCurrency(bill.amount)}
                         </td>
-                        <td>
-                          <div className="row-actions">
+                        <td className="h-[57px] border-b border-[#f0f2ee] text-[12px] text-[#68766f] dark:border-dark-border">
+                          <div className="flex justify-end gap-1 max-[600px]:justify-around max-[600px]:gap-0">
                             <button
                               title="Editar conta recorrente"
                               aria-label="Editar conta recorrente"
                               onClick={() => setDialog(bill)}
-                              className="row-action"
+                              className={`${iconButtonClasses} !size-[27px] !border-0 !bg-transparent !text-[#9aa59e] max-[600px]:!size-5`}
                             >
                               <Pencil size={15} />
                             </button>
@@ -650,7 +714,7 @@ export default function DashboardPage({
                               title="Tirar da recorrência"
                               aria-label="Tirar da recorrência"
                               onClick={() => void toggleRecurrence(bill)}
-                              className="row-action row-action-active"
+                              className="grid size-[27px] place-items-center rounded-md bg-[#edf5f0] text-teal dark:bg-[#20372d] dark:text-[#a9e3ce] max-[600px]:size-5"
                             >
                               <Repeat size={15} />
                             </button>
@@ -658,7 +722,7 @@ export default function DashboardPage({
                               title="Excluir conta"
                               aria-label="Excluir conta"
                               onClick={() => setBillToDelete(bill)}
-                              className="row-action action-delete"
+                              className="grid size-[27px] place-items-center rounded-md bg-transparent text-[#9aa59e] hover:bg-[#fff1eb] hover:text-[#dd6245] max-[600px]:size-5"
                             >
                               <Trash2 size={15} />
                             </button>
@@ -671,14 +735,21 @@ export default function DashboardPage({
               </div>
             )}
           </section>
-          <section className="panel payments-panel" id="payments-section">
-            <div className="panel-heading">
+          <section
+            className="mt-[14px] scroll-mt-[15px] rounded-[11px] border border-[#e9ede6] bg-white px-[19px] pb-3 pt-[17px] dark:border-dark-border dark:bg-dark-surface"
+            id="payments-section"
+          >
+            <div className="flex items-center justify-between">
               <div>
-                <span className="panel-kicker">HISTÓRICO</span>
-                <h2>Pagamentos recentes</h2>
+                <span className="text-[10px] font-bold tracking-[1.1px] text-[#9aa59e] dark:text-[#9eafa5]">
+                  HISTÓRICO
+                </span>
+                <h2 className="mt-[5px] font-display text-[16px] font-semibold tracking-[-0.3px] text-[#173d33] dark:text-[#e2ece5]">
+                  Pagamentos recentes
+                </h2>
               </div>
               <button
-                className="subtle-link"
+                className="inline-flex items-center gap-[5px] border-0 bg-transparent text-[10px] font-semibold text-teal"
                 onClick={() => {
                   setStatus("paid");
                   document
@@ -690,37 +761,44 @@ export default function DashboardPage({
               </button>
             </div>
             {data?.recentPayments.length ? (
-              <div className="payment-list">
+              <div className="mt-2">
                 {data.recentPayments.map((bill) => (
-                  <div className="payment-item" key={bill.id}>
-                    <span className="payment-check">
+                  <div
+                    className="flex min-h-[49px] items-center gap-[10px] border-b border-[#f0f2ee] text-[#334a40] last:border-0 max-[600px]:gap-[7px] dark:border-dark-border dark:text-[#e2ece5]"
+                    key={bill.id}
+                  >
+                    <span className="grid size-[25px] place-items-center rounded-full bg-[#e8f4ee] text-teal">
                       <Check size={15} />
                     </span>
-                    <div className="payment-name">
-                      <b>{bill.title}</b>
-                      <small>
+                    <div className="flex-1">
+                      <b className="block text-[12px] font-semibold text-[#334a40] dark:text-[#e2ece5]">
+                        {bill.title}
+                      </b>
+                      <small className="mt-1 block text-[12px] text-[#98a39c]">
                         {bill.category} · pago em{" "}
                         {bill.paidAt
                           ? formatDate(bill.paidAt)
                           : formatDate(bill.dueDate)}
                       </small>
                     </div>
-                    <b className="payment-amount">
+                    <b className="text-[12px] font-semibold text-[#31483e] dark:text-[#e2ece5]">
                       {formatCurrency(bill.amount)}
                     </b>
-                    <span className="payment-status">Pago</span>
+                    <span className="ml-[13px] rounded-[5px] bg-[#e8f4ee] px-[7px] py-[5px] text-[10px] text-teal max-[600px]:ml-[3px]">
+                      Pago
+                    </span>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="no-payments">
+              <p className="my-[22px] mb-5 text-center text-[10px] text-[#8c9891]">
                 Os pagamentos registrados neste mês aparecerão aqui.
               </p>
             )}
           </section>
-          <footer className="dashboard-footer">
+          <footer className="flex justify-between gap-2 px-0 pb-[3px] pt-[18px] text-[12px] text-[#9aa59e] max-[600px]:text-[9px]">
             <span>© 2025 Monevo · Seu dinheiro, no ritmo certo.</span>
-            <span>
+            <span className="inline-flex items-center gap-[5px] text-[9px]">
               <ShieldCheck size={14} /> Seus dados são privados
             </span>
           </footer>

@@ -13,7 +13,7 @@ export default function ThemeToggle({
   const label = theme === "dark" ? "Ativar modo claro" : "Ativar modo escuro";
   return (
     <button
-      className={`theme-toggle ${compact ? "theme-toggle-compact" : ""}`}
+      className={`inline-flex min-h-9 items-center justify-center gap-[7px] rounded-lg border border-[#e2e9e1] bg-transparent px-[11px] text-xs font-semibold text-[#53675e] transition-colors duration-150 hover:bg-[#eaf3ef] hover:text-teal dark:border-[#34483d] dark:bg-[#18271f] dark:text-[#c1d0c7] dark:hover:bg-[#20372d] dark:hover:text-[#8bd5c0] ${compact ? "w-9 px-0" : "max-[600px]:w-9 max-[600px]:p-0 max-[600px]:[&>span]:hidden"}`}
       onClick={onToggle}
       aria-label={label}
       title={label}

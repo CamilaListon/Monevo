@@ -1,5 +1,11 @@
 import { CheckCircle2, CircleAlert, X } from "lucide-react";
 import { useEffect, useRef } from "react";
+import {
+  buttonBaseClasses,
+  buttonDarkClasses,
+  iconButtonClasses,
+  modalBackdropClasses,
+} from "../utils/tailwind";
 
 interface AlertDialogProps {
   title: string;
@@ -31,20 +37,20 @@ export default function AlertDialog({
 
   return (
     <div
-      className="modal-backdrop"
+      className={modalBackdropClasses}
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
     >
       <section
-        className="confirm-dialog"
+        className="relative w-full max-w-[410px] animate-dialog-in rounded-[15px] border border-[#edf0ea] bg-white p-[26px] text-center shadow-[0_22px_70px_#10201d35] dark:border-dark-border dark:bg-dark-surface"
         role="alertdialog"
         aria-modal="true"
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
         <button
-          className="icon-button confirm-close"
+          className={`${iconButtonClasses} absolute right-[14px] top-[14px]`}
           type="button"
           onClick={onClose}
           aria-label="Fechar"
@@ -52,7 +58,7 @@ export default function AlertDialog({
           <X size={18} />
         </button>
         <span
-          className={`confirm-dialog-icon ${tone === "success" ? "alert-dialog-success" : "confirm-dialog-danger"}`}
+          className={`mx-auto mb-[14px] grid size-11 place-items-center rounded-xl ${tone === "success" ? "bg-[#e4f2ee] text-teal dark:bg-[#20372d] dark:text-[#9cdec6]" : "bg-[#fff0e9] text-[#dc6847] dark:bg-[#3a2923] dark:text-[#ffb49a]"}`}
         >
           {tone === "success" ? (
             <CheckCircle2 size={20} />
@@ -60,13 +66,23 @@ export default function AlertDialog({
             <CircleAlert size={20} />
           )}
         </span>
-        <h2 id="alert-dialog-title">{title}</h2>
-        <p id="alert-dialog-description">{description}</p>
-        <div className="confirm-dialog-actions">
+        <h2
+          id="alert-dialog-title"
+          className="mb-2 font-display text-[21px] font-semibold text-[#173d33] dark:text-[#e2ece5]"
+        >
+          {title}
+        </h2>
+        <p
+          id="alert-dialog-description"
+          className="mx-auto max-w-[340px] text-[12px] leading-[1.65] text-[#87938c] dark:text-[#b4c3ba]"
+        >
+          {description}
+        </p>
+        <div className="mt-5 flex justify-center gap-2 border-t border-[#eff1ed] pt-4 dark:border-[#34483d]">
           <button
             ref={buttonRef}
             type="button"
-            className="button button-dark"
+            className={`${buttonBaseClasses} min-h-10 rounded-lg px-[13px] text-[12px] ${buttonDarkClasses}`}
             onClick={onClose}
           >
             {buttonLabel}
