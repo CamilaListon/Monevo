@@ -8,12 +8,14 @@ export default function SummaryCard({
   icon,
   tone,
   footer,
+  onClick,
 }: {
   title: string;
   value: number;
   icon: ReactNode;
   tone: string;
   footer: string;
+  onClick: () => void;
 }) {
   const toneStyles = {
     green: "bg-[#e7f2ec] text-teal dark:bg-[#20372d]",
@@ -29,7 +31,11 @@ export default function SummaryCard({
         : "text-[#9aa49e] dark:text-[#9eafa5]";
 
   return (
-    <div className="min-h-[121px] rounded-[11px] border border-[#e9ede6] bg-white px-4 pb-[13px] pt-[15px] dark:border-dark-border dark:bg-dark-surface min-[1450px]:min-h-[132px] min-[1450px]:px-[18px] min-[1450px]:py-[17px] max-[1080px]:px-3 max-[600px]:min-h-[110px] max-[600px]:p-3">
+    <button
+      type="button"
+      onClick={onClick}
+      className="w-full cursor-pointer rounded-[11px] border border-[#e9ede6] bg-white px-4 pb-[13px] pt-[15px] text-left transition-[border-color,box-shadow] hover:border-[#c9ddd1] hover:shadow-[0_8px_24px_#10201d0d] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal dark:border-dark-border dark:bg-dark-surface dark:hover:border-[#4a6557] min-h-[121px] min-[1450px]:min-h-[132px] min-[1450px]:px-[18px] min-[1450px]:py-[17px] max-[1080px]:px-3 max-[600px]:min-h-[110px] max-[600px]:p-3"
+    >
       <div className="flex items-center justify-between text-[10px] text-[#78857e] dark:text-dark-muted">
         <span>{title}</span>
         <span
@@ -53,6 +59,6 @@ export default function SummaryCard({
         )}
         {footer}
       </div>
-    </div>
+    </button>
   );
 }

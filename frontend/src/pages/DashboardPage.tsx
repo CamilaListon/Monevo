@@ -21,6 +21,7 @@ import AlertDialog from "../components/AlertDialog";
 import ConfirmDialog from "../components/ConfirmDialog";
 import StatusBadge from "../components/StatusBadge";
 import SummaryCard from "../components/SummaryCard";
+import SummaryBillsDialog from "../components/SummaryBillsDialog";
 import ThemeToggle from "../components/ThemeToggle";
 import Sidebar from "../components/Sidebar";
 import { api, apiUrl } from "../utils/api";
@@ -74,6 +75,10 @@ export default function DashboardPage({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [dialog, setDialog] = useState<Bill | "new" | null>(null);
+  const [summaryDialog, setSummaryDialog] = useState<{
+    title: string;
+    filter: StatusFilter;
+  } | null>(null);
   const [search, setSearch] = useState("");
   const [mobileMenu, setMobileMenu] = useState(false);
   const [activeNav, setActiveNav] = useState("Visão geral");
@@ -210,6 +215,13 @@ export default function DashboardPage({
   const paidPercentage = data?.bills.length
     ? Math.round((paidCount / data.bills.length) * 100)
     : 0;
+  const summaryDialogBills = summaryDialog
+    ? (data?.bills ?? []).filter(
+        (bill) =>
+          summaryDialog.filter === "all" ||
+          bill.status === summaryDialog.filter,
+      )
+    : [];
 
   return (
     <div className="min-h-screen overflow-x-clip bg-[#f5f6f2] dark:bg-dark-canvas">
@@ -317,6 +329,9 @@ export default function DashboardPage({
               icon={<Wallet size={18} />}
               tone="green"
               footer={`${data?.bills.length ?? 0} contas neste mês`}
+              onClick={() =>
+                setSummaryDialog({ title: "Todas as contas", filter: "all" })
+              }
             />
             <SummaryCard
               title="Já pagas"
@@ -324,6 +339,9 @@ export default function DashboardPage({
               icon={<CheckCircle2 size={18} />}
               tone="teal"
               footer={`${paidPercentage}% das contas do mês`}
+              onClick={() =>
+                setSummaryDialog({ title: "Contas pagas", filter: "paid" })
+              }
             />
             <SummaryCard
               title="A vencer"
@@ -331,6 +349,12 @@ export default function DashboardPage({
               icon={<CalendarDays size={18} />}
               tone="orange"
               footer="Contas ainda não pagas"
+              onClick={() =>
+                setSummaryDialog({
+                  title: "Contas a vencer",
+                  filter: "pending",
+                })
+              }
             />
             <SummaryCard
               title="Atrasadas"
@@ -338,6 +362,12 @@ export default function DashboardPage({
               icon={<ArrowUpRight size={18} />}
               tone="red"
               footer="Precisam da sua atenção"
+              onClick={() =>
+                setSummaryDialog({
+                  title: "Contas atrasadas",
+                  filter: "overdue",
+                })
+              }
             />
           </section>
           <Suspense
@@ -958,6 +988,17 @@ export default function DashboardPage({
               setMonth(savedMonth);
             }
             await loadRecurringBills();
+          }}
+        />
+      )}
+      {summaryDialog && (
+        <SummaryBillsDialog
+          title={summaryDialog.title}
+          bills={summaryDialogBills}
+          onClose={() => setSummaryDialog(null)}
+          onEdit={(bill) => {
+            setSummaryDialog(null);
+            setDialog(bill);
           }}
         />
       )}
