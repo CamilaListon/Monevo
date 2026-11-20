@@ -5,13 +5,15 @@ import {
   CreditCard,
   LayoutDashboard,
   LogOut,
+  Repeat,
   UserRound,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import Brand from "./Brand";
 
 type SidebarPage = "dashboard" | "account";
-type DashboardSection = "Visão geral" | "Minhas contas" | "Pagamentos";
+type DashboardSection =
+  "Visão geral" | "Minhas contas" | "Contas recorrentes" | "Pagamentos";
 
 interface SidebarProps {
   page: SidebarPage;
@@ -40,6 +42,11 @@ export default function Sidebar({
       label: "Minhas contas",
       icon: CreditCard,
       target: "/dashboard#bills-section",
+    },
+    {
+      label: "Contas recorrentes",
+      icon: Repeat,
+      target: "/dashboard#recurring-section",
     },
     {
       label: "Pagamentos",
@@ -81,11 +88,11 @@ export default function Sidebar({
             to="/account"
             onClick={onClose}
           >
-            <UserRound size={18} /> Minha conta
+            <UserRound size={18} /> Perfil
           </Link>
         ) : (
           <Link className="side-link" to="/account">
-            <UserRound size={18} /> Minha conta
+            <UserRound size={18} /> Perfil
           </Link>
         )}
       </nav>

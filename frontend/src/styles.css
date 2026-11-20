@@ -704,6 +704,65 @@ a {
   padding-top: 11px;
   resize: vertical;
 }
+.bill-form .recurring-option {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 11px 12px;
+  border: 1px solid #e6ebe4;
+  border-radius: 9px;
+  background: #f7faf7;
+}
+.bill-form .recurring-option-checkbox {
+  appearance: none;
+  width: 16px;
+  min-height: 16px;
+  flex: 0 0 16px;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  place-content: center;
+  border: 1px solid #9aa8a0;
+  border-radius: 4px;
+  color: #fff;
+  background: #fff;
+  cursor: pointer;
+}
+.bill-form .recurring-option-checkbox::before {
+  width: 4px;
+  height: 7px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  content: "";
+}
+.bill-form .recurring-option-checkbox:checked {
+  border-color: #0a7c78;
+  background: #0a7c78;
+}
+.bill-form .recurring-option-checkbox:checked::before {
+  transform: rotate(45deg) scale(1);
+}
+.bill-form .recurring-option-checkbox:focus-visible {
+  outline: 2px solid #69c5b0;
+  outline-offset: 2px;
+}
+.recurring-option-label {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  cursor: pointer;
+}
+.recurring-option-label b {
+  color: #31443e;
+  font-size: 10px;
+  line-height: 16px;
+}
+.recurring-option-label small {
+  color: #87938c;
+  font-size: 9px;
+  font-weight: 400;
+}
 .auth-form input::placeholder,
 .bill-form input::placeholder,
 .bill-form textarea::placeholder {
@@ -903,12 +962,67 @@ a {
 .month-pill svg:first-child {
   color: #0a7c78;
 }
-.month-pill input {
+.month-filter-control {
+  position: relative;
+}
+.month-picker-popover {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  opacity: 0;
-  cursor: pointer;
+  z-index: 20;
+  top: calc(100% + 9px);
+  right: 0;
+  width: 258px;
+  padding: 13px;
+  border: 1px solid #e6ebe4;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 14px 36px #10201d24;
+}
+.month-picker-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  color: #31443e;
+  font-size: 13px;
+}
+.month-picker-year-button {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 8px;
+  color: #74817b;
+  background: transparent;
+}
+.month-picker-year-button:hover,
+.month-picker-option:hover {
+  color: #0a7c78;
+  background: #f0f6f2;
+}
+.month-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+}
+.month-picker-option {
+  min-height: 36px;
+  padding: 4px;
+  border: 0;
+  border-radius: 7px;
+  color: #586760;
+  background: transparent;
+  font-size: 10px;
+  text-transform: capitalize;
+}
+.month-picker-option-active {
+  color: #fff;
+  background: #0a7c78;
+  font-weight: 600;
+}
+.month-picker-option-active:hover {
+  color: #fff;
+  background: #086b67;
 }
 .topbar-divider {
   width: 1px;
@@ -1510,6 +1624,10 @@ tbody tr:last-child td {
   color: #0a7c78;
   background: #edf5f0;
 }
+.row-action-active {
+  color: #0a7c78;
+  background: #edf5f0;
+}
 .row-action.action-delete:hover {
   color: #dd6245;
   background: #fff1eb;
@@ -1543,6 +1661,11 @@ tbody tr:last-child td {
 .payments-panel {
   margin-top: 14px;
   padding: 17px 19px 12px;
+  scroll-margin-top: 15px;
+}
+.recurring-bills-panel {
+  margin-top: 14px;
+  padding: 17px 19px 0;
   scroll-margin-top: 15px;
 }
 .payments-panel .panel-heading {
@@ -2178,7 +2301,8 @@ tbody tr:last-child td {
     max-width: 160px;
   }
   .bills-panel,
-  .payments-panel {
+  .payments-panel,
+  .recurring-bills-panel {
     margin-top: 9px;
     padding: 15px 12px 0;
   }
@@ -2210,11 +2334,13 @@ tbody tr:last-child td {
     flex-shrink: 0;
   }
   .table-wrap {
+    width: calc(100% + 24px);
+    min-width: 0;
     margin-inline: -12px;
     padding-inline: 12px;
   }
   table {
-    min-width: 680px;
+    min-width: 375px;
   }
   .payments-panel .panel-heading h2 {
     font-size: 13px;
@@ -2581,6 +2707,23 @@ html[data-theme="dark"] .floating-badge,
 html[data-theme="dark"] .bill-dialog {
   box-shadow: 0 20px 55px #00000030;
 }
+html[data-theme="dark"] .confirm-dialog h2 {
+  color: #e2ece5;
+}
+html[data-theme="dark"] .confirm-dialog p {
+  color: #b4c3ba;
+}
+html[data-theme="dark"] .confirm-dialog-actions {
+  border-color: #34483d;
+}
+html[data-theme="dark"] .confirm-dialog-icon {
+  color: #f2ce7e;
+  background: #3a321f;
+}
+html[data-theme="dark"] .confirm-dialog-icon.confirm-dialog-danger {
+  color: #ffb49a;
+  background: #3a2923;
+}
 html[data-theme="dark"] .brand:not(.brand-light) {
   color: #e5eee8;
 }
@@ -2706,6 +2849,28 @@ html[data-theme="dark"] .theme-toggle {
   color: #c1d0c7;
   background: #18271f;
 }
+html[data-theme="dark"] .month-picker-popover {
+  border-color: #34483d;
+  background: #17251e;
+  box-shadow: 0 14px 36px #00000045;
+}
+html[data-theme="dark"] .month-picker-heading {
+  color: #e2ece5;
+}
+html[data-theme="dark"] .month-picker-year-button,
+html[data-theme="dark"] .month-picker-option {
+  color: #c1d0c7;
+}
+html[data-theme="dark"] .month-picker-year-button:hover,
+html[data-theme="dark"] .month-picker-option:hover {
+  color: #8bd5c0;
+  background: #20372d;
+}
+html[data-theme="dark"] .month-picker-option-active,
+html[data-theme="dark"] .month-picker-option-active:hover {
+  color: #fff;
+  background: #0a7c78;
+}
 html[data-theme="dark"] .month-pill:hover,
 html[data-theme="dark"] .icon-button:hover,
 html[data-theme="dark"] .theme-toggle:hover {
@@ -2786,6 +2951,10 @@ html[data-theme="dark"] .badge-overdue {
   color: #ffab8d;
   background: #3a2923;
 }
+html[data-theme="dark"] .row-action-active {
+  color: #8bd5c0;
+  background: #20372d;
+}
 html[data-theme="dark"] .empty-state,
 html[data-theme="dark"] .no-payments {
   color: #a5b5ac;
@@ -2809,6 +2978,25 @@ html[data-theme="dark"] .bill-form textarea {
   border-color: #34483d;
   color: #e2ece5;
   background: #111c16;
+}
+html[data-theme="dark"] .bill-form .recurring-option {
+  border-color: #34483d;
+  background: #111c16;
+}
+html[data-theme="dark"] .bill-form .recurring-option-checkbox {
+  border-color: #a5b5ac;
+  color: #17251e;
+  background: #17251e;
+}
+html[data-theme="dark"] .bill-form .recurring-option-checkbox:checked {
+  border-color: #fff;
+  background: #fff;
+}
+html[data-theme="dark"] .recurring-option-label b {
+  color: #e2ece5;
+}
+html[data-theme="dark"] .recurring-option-label small {
+  color: #a5b5ac;
 }
 html[data-theme="dark"] .auth-form input:focus,
 html[data-theme="dark"] .bill-form input:focus,
@@ -3075,6 +3263,38 @@ html[data-theme="dark"] .account-form label small {
 html[data-theme="dark"] .account-section-icon {
   color: #94dfc7;
   background: #20372d;
+}
+
+@media (max-width: 600px) {
+  .month-picker-popover {
+    position: absolute;
+    top: calc(100% + 9px);
+    right: -32px;
+    left: auto;
+    width: 100vw;
+    max-width: none;
+    max-height: calc(100dvh - 24px - env(safe-area-inset-top));
+    overflow-y: auto;
+    padding: 17px;
+    border-radius: 16px;
+    box-shadow: 0 18px 48px #10201d35;
+  }
+  .month-picker-heading {
+    margin-bottom: 12px;
+    font-size: 15px;
+  }
+  .month-picker-year-button {
+    width: 44px;
+    height: 44px;
+  }
+  .month-picker-grid {
+    gap: 7px;
+  }
+  .month-picker-option {
+    min-height: 46px;
+    font-size: 12px;
+    touch-action: manipulation;
+  }
 }
 html[data-theme="dark"] .security-icon {
   color: #f0c56f;

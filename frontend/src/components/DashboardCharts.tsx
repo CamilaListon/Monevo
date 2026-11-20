@@ -1,4 +1,5 @@
-import { Filter } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ChevronLeft, ChevronRight, Filter } from "lucide-react";
 import {
   Area,
   AreaChart,
@@ -17,14 +18,54 @@ import { formatCurrency } from "../utils/format";
 export default function DashboardCharts({
   data,
   month,
+  monthValue,
   loading,
-  onSelectMonth,
+  onMonthChange,
 }: {
   data: DashboardData | null;
   month: string;
+  monthValue: string;
   loading: boolean;
-  onSelectMonth: () => void;
+  onMonthChange: (month: string) => void;
 }) {
+  const [monthPickerOpen, setMonthPickerOpen] = useState(false);
+  const [calendarYear, setCalendarYear] = useState(
+    Number(monthValue.slice(0, 4)),
+  );
+  const monthPickerRef = useRef<HTMLDivElement>(null);
+  const selectedMonth = Number(monthValue.slice(5, 7)) - 1;
+  const monthOptions = Array.from({ length: 12 }, (_, monthIndex) => ({
+    value: monthIndex,
+    label: new Intl.DateTimeFormat("pt-BR", {
+      month: "long",
+      timeZone: "UTC",
+    }).format(new Date(Date.UTC(calendarYear, monthIndex, 1))),
+  }));
+
+  useEffect(() => {
+    if (!monthPickerOpen) return;
+
+    function handlePointerDown(event: PointerEvent) {
+      if (
+        event.target instanceof Node &&
+        !monthPickerRef.current?.contains(event.target)
+      ) {
+        setMonthPickerOpen(false);
+      }
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") setMonthPickerOpen(false);
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [monthPickerOpen]);
+
   const paidCount =
     data?.bills.filter((bill) => bill.status === "paid").length ?? 0;
   const paidPercentage = data?.bills.length
@@ -124,13 +165,70 @@ export default function DashboardCharts({
             <span className="panel-kicker">SEU MÊS EM FOCO</span>
             <h2>Status das contas</h2>
           </div>
-          <button
-            className="icon-button"
-            title="Filtrar por mês"
-            onClick={onSelectMonth}
-          >
-            <Filter size={17} />
-          </button>
+          <div className="month-filter-control" ref={monthPickerRef}>
+            <button
+              className="icon-button"
+              title="Filtrar por mês"
+              aria-label="Alterar mês do painel"
+              type="button"
+              aria-haspopup="dialog"
+              aria-expanded={monthPickerOpen}
+              onClick={() => {
+                setCalendarYear(Number(monthValue.slice(0, 4)));
+                setMonthPickerOpen((open) => !open);
+              }}
+            >
+              <Filter size={17} />
+            </button>
+            {monthPickerOpen && (
+              <div
+                className="month-picker-popover"
+                role="dialog"
+                aria-label="Selecionar mês do painel"
+              >
+                <div className="month-picker-heading">
+                  <button
+                    className="month-picker-year-button"
+                    type="button"
+                    aria-label="Ano anterior"
+                    onClick={() => setCalendarYear((year) => year - 1)}
+                  >
+                    <ChevronLeft size={17} />
+                  </button>
+                  <b>{calendarYear}</b>
+                  <button
+                    className="month-picker-year-button"
+                    type="button"
+                    aria-label="Próximo ano"
+                    onClick={() => setCalendarYear((year) => year + 1)}
+                  >
+                    <ChevronRight size={17} />
+                  </button>
+                </div>
+                <div className="month-picker-grid">
+                  {monthOptions.map(({ value, label }) => (
+                    <button
+                      key={value}
+                      type="button"
+                      className={`month-picker-option ${calendarYear === Number(monthValue.slice(0, 4)) && value === selectedMonth ? "month-picker-option-active" : ""}`}
+                      aria-pressed={
+                        calendarYear === Number(monthValue.slice(0, 4)) &&
+                        value === selectedMonth
+                      }
+                      onClick={() => {
+                        onMonthChange(
+                          `${calendarYear}-${String(value + 1).padStart(2, "0")}`,
+                        );
+                        setMonthPickerOpen(false);
+                      }}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
         <div className="status-chart-wrap">
           <div className="status-donut">

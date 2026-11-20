@@ -17,6 +17,8 @@ export interface Bill {
   dueDate: string;
   paidAt: string | null;
   notes: string | null;
+  recurring: boolean;
+  recurrenceSourceId: string | null;
   status: BillStatus;
 }
 
@@ -34,4 +36,5 @@ export interface BillInput {
   amount: number;
   dueDate: string;
   notes: string;
+  recurring?: boolean;
 }

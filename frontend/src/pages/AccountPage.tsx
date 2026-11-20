@@ -210,7 +210,7 @@ export default function AccountPage({
             <Menu size={21} />
           </button>
           <div className="breadcrumb">
-            Seu espaço <span>/</span> <b>Minha conta</b>
+            Seu espaço <span>/</span> <b>Perfil</b>
           </div>
           <div className="topbar-right">
             <ThemeToggle theme={theme} onToggle={onToggleTheme} compact />
@@ -233,7 +233,7 @@ export default function AccountPage({
           <div className="welcome-row account-welcome">
             <div>
               <div className="welcome-date">SEU PERFIL</div>
-              <h1>Minha conta</h1>
+              <h1>Perfil</h1>
               <p>Gerencie seus dados pessoais e sua segurança.</p>
             </div>
           </div>

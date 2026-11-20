@@ -5,11 +5,11 @@ import {
   CalendarDays,
   Check,
   CheckCircle2,
-  ChevronDown,
   FileText,
   Menu,
   Pencil,
   Plus,
+  Repeat,
   Search,
   ShieldCheck,
   Trash2,
@@ -55,6 +55,10 @@ export default function DashboardPage({
   const [status, setStatus] = useState<StatusFilter>("all");
   const [category, setCategory] = useState("all");
   const [data, setData] = useState<DashboardData | null>(null);
+  const [recurringBills, setRecurringBills] = useState<Bill[]>([]);
+  const [recurringLoading, setRecurringLoading] = useState(true);
+  const [recurringSearch, setRecurringSearch] = useState("");
+  const [recurringCategory, setRecurringCategory] = useState("all");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [dialog, setDialog] = useState<Bill | "new" | null>(null);
@@ -81,9 +85,28 @@ export default function DashboardPage({
     }
   }
 
+  async function loadRecurringBills() {
+    setRecurringLoading(true);
+    try {
+      setRecurringBills(await api<Bill[]>("/bills?recurring=true"));
+    } catch (requestError) {
+      setError(
+        requestError instanceof Error
+          ? requestError.message
+          : "Não foi possível carregar as contas recorrentes.",
+      );
+    } finally {
+      setRecurringLoading(false);
+    }
+  }
+
   useEffect(() => {
     void loadDashboard();
   }, [month]);
+
+  useEffect(() => {
+    void loadRecurringBills();
+  }, []);
 
   async function logout() {
     try {
@@ -114,11 +137,28 @@ export default function DashboardPage({
     }
   }
 
+  async function toggleRecurrence(bill: Bill) {
+    const isRecurring = bill.recurring || Boolean(bill.recurrenceSourceId);
+    try {
+      await api<Bill>(`/bills/${bill.id}/recurrence`, {
+        method: "PATCH",
+        body: JSON.stringify({ recurring: !isRecurring }),
+      });
+      await Promise.all([loadDashboard(), loadRecurringBills()]);
+    } catch (requestError) {
+      setError(
+        requestError instanceof Error
+          ? requestError.message
+          : "Não foi possível atualizar a recorrência.",
+      );
+    }
+  }
+
   async function deleteBill(bill: Bill) {
     setDeleteBusy(true);
     try {
       await api<void>(`/bills/${bill.id}`, { method: "DELETE" });
-      await loadDashboard();
+      await Promise.all([loadDashboard(), loadRecurringBills()]);
       setBillToDelete(null);
     } catch (requestError) {
       setError(
@@ -142,6 +182,17 @@ export default function DashboardPage({
   const categories = [
     ...new Set((data?.bills ?? []).map((bill) => bill.category)),
   ];
+  const recurringCategories = [
+    ...new Set(recurringBills.map((bill) => bill.category)),
+  ];
+  const filteredRecurringBills = recurringBills.filter((bill) => {
+    const matchesCategory =
+      recurringCategory === "all" || bill.category === recurringCategory;
+    const matchesSearch = `${bill.title} ${bill.category}`
+      .toLowerCase()
+      .includes(recurringSearch.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
   const paidCount =
     data?.bills.filter((bill) => bill.status === "paid").length ?? 0;
   const paidPercentage = data?.bills.length
@@ -158,13 +209,11 @@ export default function DashboardPage({
         onLogout={() => void logout()}
         onSectionChange={(section, target) => {
           setActiveNav(section);
-          if (target !== "/dashboard") {
+          setMobileMenu(false);
+          const targetId = target.split("#")[1];
+          if (targetId) {
             document
-              .getElementById(
-                target.endsWith("#bills-section")
-                  ? "bills-section"
-                  : "payments-section",
-              )
+              .getElementById(targetId)
               ?.scrollIntoView({ behavior: "smooth" });
           }
         }}
@@ -190,21 +239,6 @@ export default function DashboardPage({
           </div>
           <div className="topbar-right">
             <ThemeToggle theme={theme} onToggle={onToggleTheme} compact />
-            <button
-              className="month-pill"
-              onClick={() => document.getElementById("month-picker")?.focus()}
-            >
-              <CalendarDays size={16} />
-              <span>{monthLabel(month)}</span>
-              <ChevronDown size={14} />
-              <input
-                id="month-picker"
-                type="month"
-                value={month}
-                onChange={(event) => setMonth(event.target.value)}
-                aria-label="Selecionar mês"
-              />
-            </button>
             <div className="topbar-divider" />
             <Link
               className="user-profile-link"
@@ -249,7 +283,7 @@ export default function DashboardPage({
               className="button button-dark add-button"
               onClick={() => setDialog("new")}
             >
-              <Plus size={18} /> Nova conta
+              <Plus size={18} /> Novo lançamento
             </button>
           </div>
           <section className="summary-grid" aria-label="Resumo mensal">
@@ -297,10 +331,9 @@ export default function DashboardPage({
             <DashboardCharts
               data={data}
               month={monthLabel(month)}
+              monthValue={month}
               loading={loading}
-              onSelectMonth={() =>
-                document.getElementById("month-picker")?.focus()
-              }
+              onMonthChange={setMonth}
             />
           </Suspense>
           <section className="panel bills-panel" id="bills-section">
@@ -403,6 +436,7 @@ export default function DashboardPage({
                       <th>VENCIMENTO</th>
                       <th>VALOR</th>
                       <th>SITUAÇÃO</th>
+                      <th>RECORRENTE</th>
                       <th>
                         <span className="sr-only">Ações</span>
                       </th>
@@ -445,6 +479,11 @@ export default function DashboardPage({
                           <StatusBadge status={bill.status} />
                         </td>
                         <td>
+                          {bill.recurring || bill.recurrenceSourceId
+                            ? "Sim"
+                            : "Não"}
+                        </td>
+                        <td>
                           <div className="row-actions">
                             <button
                               title={
@@ -452,8 +491,13 @@ export default function DashboardPage({
                                   ? "Marcar como pendente"
                                   : "Marcar como paga"
                               }
+                              aria-label={
+                                bill.status === "paid"
+                                  ? "Marcar como pendente"
+                                  : "Marcar como paga"
+                              }
                               onClick={() => void togglePayment(bill)}
-                              className="row-action"
+                              className={`row-action ${bill.status === "paid" ? "row-action-active" : ""}`}
                             >
                               <Check size={15} />
                             </button>
@@ -465,7 +509,154 @@ export default function DashboardPage({
                               <Pencil size={15} />
                             </button>
                             <button
+                              title={
+                                bill.recurring || bill.recurrenceSourceId
+                                  ? "Tirar da recorrência"
+                                  : "Tornar recorrente"
+                              }
+                              aria-label={
+                                bill.recurring || bill.recurrenceSourceId
+                                  ? "Tirar da recorrência"
+                                  : "Tornar recorrente"
+                              }
+                              onClick={() => void toggleRecurrence(bill)}
+                              className={`row-action ${bill.recurring || bill.recurrenceSourceId ? "row-action-active" : ""}`}
+                            >
+                              <Repeat size={15} />
+                            </button>
+                            <button
                               title="Excluir conta"
+                              onClick={() => setBillToDelete(bill)}
+                              className="row-action action-delete"
+                            >
+                              <Trash2 size={15} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </section>
+          <section
+            className="panel recurring-bills-panel"
+            id="recurring-section"
+          >
+            <div className="panel-heading bills-heading">
+              <div>
+                <span className="panel-kicker">GESTÃO DE RECORRÊNCIAS</span>
+                <h2>
+                  Contas recorrentes{" "}
+                  <span className="count-badge">
+                    {filteredRecurringBills.length}
+                  </span>
+                </h2>
+              </div>
+              <div className="table-actions">
+                <label className="search-field">
+                  <Search size={16} />
+                  <input
+                    placeholder="Buscar conta recorrente..."
+                    value={recurringSearch}
+                    onChange={(event) => setRecurringSearch(event.target.value)}
+                  />
+                </label>
+                <select
+                  className="filter-select"
+                  value={recurringCategory}
+                  onChange={(event) => setRecurringCategory(event.target.value)}
+                  aria-label="Filtrar recorrências por categoria"
+                >
+                  <option value="all">Todas categorias</option>
+                  {recurringCategories.map((item) => (
+                    <option key={item}>{item}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            {recurringLoading ? (
+              <div className="empty-state">
+                <span className="loader" />
+                <p>Carregando contas recorrentes...</p>
+              </div>
+            ) : filteredRecurringBills.length === 0 ? (
+              <div className="empty-state">
+                <span className="empty-icon">
+                  <Repeat size={22} />
+                </span>
+                <b>
+                  {recurringBills.length
+                    ? "Nenhuma recorrência corresponde aos filtros"
+                    : "Nenhuma conta recorrente cadastrada"}
+                </b>
+                <p>
+                  {recurringBills.length
+                    ? "Tente buscar por outro nome ou categoria."
+                    : "Ative a recorrência ao adicionar uma conta."}
+                </p>
+              </div>
+            ) : (
+              <div className="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>CONTA</th>
+                      <th>CATEGORIA</th>
+                      <th>VENCIMENTO INICIAL</th>
+                      <th>VALOR</th>
+                      <th>
+                        <span className="sr-only">Ações</span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredRecurringBills.map((bill) => (
+                      <tr key={bill.id}>
+                        <td>
+                          <div className="bill-title-cell">
+                            <span
+                              className={`bill-category-icon ${bill.status}`}
+                            >
+                              <Repeat size={16} />
+                            </span>
+                            <div>
+                              <b>{bill.title}</b>
+                              <small>{bill.notes || bill.category}</small>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <span className="category-label">
+                            {bill.category}
+                          </span>
+                        </td>
+                        <td>{formatDate(bill.dueDate)}</td>
+                        <td className="amount-cell">
+                          {formatCurrency(bill.amount)}
+                        </td>
+                        <td>
+                          <div className="row-actions">
+                            <button
+                              title="Editar conta recorrente"
+                              aria-label="Editar conta recorrente"
+                              onClick={() => setDialog(bill)}
+                              className="row-action"
+                            >
+                              <Pencil size={15} />
+                            </button>
+                            <button
+                              title="Tirar da recorrência"
+                              aria-label="Tirar da recorrência"
+                              onClick={() => void toggleRecurrence(bill)}
+                              className="row-action row-action-active"
+                            >
+                              <Repeat size={15} />
+                            </button>
+                            <button
+                              title="Excluir conta"
+                              aria-label="Excluir conta"
                               onClick={() => setBillToDelete(bill)}
                               className="row-action action-delete"
                             >
@@ -539,9 +730,15 @@ export default function DashboardPage({
         <BillDialog
           value={dialog === "new" ? null : dialog}
           onClose={() => setDialog(null)}
-          onSaved={async () => {
+          onSaved={async (dueDate) => {
             setDialog(null);
-            await loadDashboard();
+            const savedMonth = dueDate.slice(0, 7);
+            if (savedMonth === month) {
+              await loadDashboard();
+            } else {
+              setMonth(savedMonth);
+            }
+            await loadRecurringBills();
           }}
         />
       )}

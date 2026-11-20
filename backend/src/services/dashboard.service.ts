@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { prisma } from "../config/database.js";
 import { statusOf } from "../utils/presenters.js";
+import { ensureMonthlyOccurrences } from "./bills.service.js";
 
 export const dashboardQuerySchema = z.object({ month: z.iso.date().optional() });
 
@@ -9,8 +10,13 @@ export async function getDashboard(userId: string, month?: string) {
     ? new Date(`${month.slice(0, 7)}-01T00:00:00.000Z`)
     : new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), 1));
   const nextMonth = new Date(Date.UTC(monthDate.getUTCFullYear(), monthDate.getUTCMonth() + 1, 1));
+  await ensureMonthlyOccurrences(userId, monthDate);
   const records = await prisma.bill.findMany({
-    where: { userId, dueDate: { gte: monthDate, lt: nextMonth } },
+    where: {
+      userId,
+      recurrenceSkipped: false,
+      dueDate: { gte: monthDate, lt: nextMonth },
+    },
     orderBy: { dueDate: "asc" },
   });
   const bills = records.map((bill) => ({
@@ -36,7 +42,11 @@ export async function getDashboard(userId: string, month?: string) {
     }, {}),
   ).sort((a, b) => b.total - a.total);
   const recentPayments = await prisma.bill.findMany({
-    where: { userId, paidAt: { gte: monthDate, lt: nextMonth } },
+    where: {
+      userId,
+      recurrenceSkipped: false,
+      paidAt: { gte: monthDate, lt: nextMonth },
+    },
     orderBy: { paidAt: "desc" },
     take: 5,
   });

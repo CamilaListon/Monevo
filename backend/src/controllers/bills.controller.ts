@@ -9,6 +9,7 @@ import {
   findBill,
   listBills,
   setBillPayment,
+  setBillRecurrence,
   updateBill,
 } from "../services/bills.service.js";
 import { presentBill } from "../utils/presenters.js";
@@ -70,6 +71,20 @@ export async function payment(req: AuthenticatedRequest, res: Response): Promise
     return;
   }
   const bill = await setBillPayment(req, parsed.data.paid);
+  if (!bill) {
+    res.status(404).json({ error: "Conta não encontrada." });
+    return;
+  }
+  res.json(presentBill(bill));
+}
+
+export async function recurrence(req: AuthenticatedRequest, res: Response): Promise<void> {
+  const parsed = z.object({ recurring: z.boolean() }).safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: "Informe se a conta deve ser recorrente." });
+    return;
+  }
+  const bill = await setBillRecurrence(req, parsed.data.recurring);
   if (!bill) {
     res.status(404).json({ error: "Conta não encontrada." });
     return;

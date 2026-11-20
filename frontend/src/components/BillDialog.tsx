@@ -11,10 +11,11 @@ export default function BillDialog({
 }: {
   value: Bill | null;
   onClose: () => void;
-  onSaved: () => Promise<void>;
+  onSaved: (dueDate: string) => Promise<void>;
 }) {
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [recurring, setRecurring] = useState(false);
   const categories = [
     "Moradia",
     "Alimentação",
@@ -45,13 +46,14 @@ export default function BillDialog({
       amount: Number(String(formData.get("amount") ?? "").replace(",", ".")),
       dueDate: String(formData.get("dueDate") ?? ""),
       notes: String(formData.get("notes") ?? "").trim(),
+      ...(!value ? { recurring } : {}),
     };
     try {
       await api(`/bills${value ? `/${value.id}` : ""}`, {
         method: value ? "PATCH" : "POST",
         body: JSON.stringify(bill),
       });
-      await onSaved();
+      await onSaved(bill.dueDate);
     } catch (requestError) {
       setError(
         requestError instanceof Error
@@ -150,6 +152,27 @@ export default function BillDialog({
               required
             />
           </label>
+          {!value && (
+            <div className="recurring-option">
+              <input
+                id="recurring-bill"
+                className="recurring-option-checkbox"
+                name="recurring"
+                type="checkbox"
+                checked={recurring}
+                onChange={(event) => setRecurring(event.target.checked)}
+              />
+              <label
+                className="recurring-option-label"
+                htmlFor="recurring-bill"
+              >
+                <b>Repetir mensalmente</b>
+                <small>
+                  A conta será criada automaticamente nos meses seguintes.
+                </small>
+              </label>
+            </div>
+          )}
           <label>
             Observação <span className="optional-label">opcional</span>
             <textarea
